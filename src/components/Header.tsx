@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDashboard } from '../context/DashboardContext';
-import { Sun, Moon, Edit3, Save, X, Globe, Copy, Plus, ChevronDown, Trash2 } from 'lucide-react';
+import { Sun, Moon, Edit3, Save, X, Globe, Copy, Plus, ChevronDown, Trash2, Printer } from 'lucide-react';
+import { ExportModal } from './ExportModal';
 import { copyToClipboard } from '../lib/utils';
 import { format } from 'date-fns';
 
@@ -23,9 +24,11 @@ export const Header: React.FC = () => {
   } = useDashboard();
 
   const [showDashSelector, setShowDashSelector] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200 px-6 py-4 flex flex-wrap justify-between items-center gap-4 text-slate-900">
+      {showExportModal && <ExportModal onClose={() => setShowExportModal(false)} />}
       <div className="flex items-center gap-6">
         <div className="relative">
           <button 
@@ -100,6 +103,14 @@ export const Header: React.FC = () => {
 
       <div className="flex items-center gap-3">
         <div className="flex border border-slate-200 rounded-lg overflow-hidden bg-slate-100">
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="px-3 py-1.5 text-slate-500 hover:bg-slate-200 transition-colors flex items-center gap-2 border-r border-slate-200"
+            title="Print to PDF"
+          >
+            <Printer size={16} />
+            <span className="text-[10px] font-bold uppercase hidden sm:inline">Print</span>
+          </button>
           <button 
             onClick={() => setLanguage('en')}
             className={`px-3 py-1.5 text-[10px] uppercase font-bold transition-colors ${multiState?.preferences.language === 'en' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 text-slate-500'}`}

@@ -7,6 +7,7 @@ import { TableWidget } from './TableWidget';
 import { HighlightsWidget } from './HighlightsWidget';
 import { TimelineWidget } from './TimelineWidget';
 import { ProgressWidget } from './ProgressWidget';
+import { ErrorBoundary } from './ErrorBoundary';
 import { Settings, Trash2, GripVertical, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -93,7 +94,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
               className="bg-transparent border-b border-blue-500/30 outline-none widget-title opacity-100 text-slate-900 w-full min-w-[50px]"
             />
           ) : (
-            <span className="widget-title truncate text-slate-900">{config.title}</span>
+            <span className="widget-title text-slate-900 leading-tight break-words">{config.title}</span>
           )}
         </div>
         
@@ -139,8 +140,10 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
           </div>
         )}
       </div>
-      <div className="flex-1 relative">
-        {renderContent()}
+      <div className="flex-1 relative overflow-hidden">
+        <ErrorBoundary>
+          {renderContent()}
+        </ErrorBoundary>
       </div>
     </motion.div>
   );
