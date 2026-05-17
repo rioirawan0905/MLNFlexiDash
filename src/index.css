@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-500: #3b82f6;
+  --color-primary-900: #1e3a8a;
+
+  --radius-widget: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-[#020617] text-slate-100 font-sans antialiased transition-colors duration-500 selection:bg-blue-500/30;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: -10%;
+    left: -10%;
+    width: 60%;
+    height: 60%;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    filter: blur(120px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: -10%;
+    right: -10%;
+    width: 70%;
+    height: 70%;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+    filter: blur(150px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Light mode adjustments to maintain "Frosted" look */
+  html:not(.dark) body {
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+@layer components {
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-6 p-6 md:p-8;
+  }
+
+  .widget-card {
+    @apply bg-white/5 dark:bg-white/5 backdrop-blur-xl border border-white/10 dark:border-white/10 rounded-[24px] shadow-2xl overflow-hidden flex flex-col transition-all duration-300;
+  }
+
+  html:not(.dark) .widget-card {
+    @apply bg-white/60 backdrop-blur-md border-slate-200/50 shadow-xl;
+  }
+
+  .widget-header {
+    @apply border-b border-white/10 dark:border-white/10 px-6 py-3 flex justify-between items-center transition-colors;
+  }
+
+  .widget-title {
+    @apply font-bold text-[11px] uppercase tracking-[0.2em] text-slate-800 dark:text-white opacity-90;
+  }
+
+  .data-text {
+    @apply font-mono tracking-tighter text-slate-900 dark:text-white;
+  }
+}

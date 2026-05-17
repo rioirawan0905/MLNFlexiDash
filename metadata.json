@@ -1,0 +1,8 @@
+{
+  "name": "FlexiDash - Operational Dashboard",
+  "description": "A highly customizable, responsive operational dashboard with widgets, dark mode, i18n, and editable data integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
