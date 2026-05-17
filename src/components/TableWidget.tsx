@@ -53,18 +53,36 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
     });
   };
 
+  const renameColumn = (oldName: string, newName: string) => {
+    if (oldName === newName || !newName) return;
+    
+    const newColumns = data.columns.map((c: string) => c === oldName ? newName : c);
+    const newRows = data.rows.map((row: any) => {
+      const newRow = { ...row };
+      newRow[newName] = row[oldName];
+      delete newRow[oldName];
+      return newRow;
+    });
+
+    updateData(config.dataKey, {
+      columns: newColumns,
+      rows: newRows
+    });
+  };
+
   return (
     <div className="overflow-x-auto p-2">
       <table className="w-full text-left text-[11px] font-mono">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200 italic">
             {data.columns.map((col: string, idx: number) => (
-              <th key={idx} className="px-4 py-2 font-bold opacity-80 uppercase tracking-wider group/th">
+              <th key={idx} className="px-4 py-2 font-bold opacity-80 group/th">
                 <div className="flex items-center gap-2">
                   <EditableValue 
                     value={col} 
                     dataKey={`${config.dataKey}.columns[${idx}]`}
-                    className="text-[10px] font-bold text-slate-900"
+                    onSave={(val) => renameColumn(col, String(val))}
+                    className="text-[10px] font-bold text-slate-900 normal-case tracking-normal"
                   />
                   {isEditMode && data.columns.length > 1 && (
                     <button 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { DashboardState, WidgetConfig, DashboardData, MultiDashboardState, UserPreferences } from '../types';
+import { DashboardState, WidgetConfig, DashboardData, MultiDashboardState, UserPreferences, WidgetType } from '../types';
 import { api } from '../services/api';
 import i18n from '../lib/i18n';
 import { arrayMove } from '@dnd-kit/sortable';

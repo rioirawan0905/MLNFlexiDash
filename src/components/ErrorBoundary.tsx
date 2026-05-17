@@ -9,10 +9,11 @@ interface State {
   hasError: boolean;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false
-  };
+export class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   public static getDerivedStateFromError(_: Error): State {
     return { hasError: true };
@@ -23,7 +24,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public render() {
-    if (this.state.hasError) {
+    const { hasError } = this.state;
+    if (hasError) {
       return this.props.fallback || (
         <div className="p-6 bg-red-50 border border-red-200 rounded-xl text-center">
           <h2 className="text-red-800 font-bold mb-2">Something went wrong</h2>

@@ -164,8 +164,12 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                       <div className="flex items-center gap-1">
                         <Calendar size={10} />
                         <EditableValue value={item.start} dataKey={`${config.dataKey}[${idx}].start`} />
-                        <span>-</span>
-                        <EditableValue value={item.end} dataKey={`${config.dataKey}[${idx}].end`} />
+                        {!item.isMilestone && (
+                          <>
+                            <span>-</span>
+                            <EditableValue value={item.end} dataKey={`${config.dataKey}[${idx}].end`} />
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -181,17 +185,17 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                         className={`absolute h-3 rounded-full transition-all duration-500 z-10 ${item.isMilestone ? 'bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}
                         style={{ 
                           left: `${startPos}%`, 
-                          width: `${width}%`
+                           width: item.isMilestone ? '0px' : `${width}%`
                         }}
                       >
                         {/* Milestone Marker */}
                         {item.isMilestone && (
-                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-yellow-500 rotate-45 border-2 border-white shadow-lg" />
+                          <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-yellow-500 rotate-45 border-2 border-white shadow-lg" />
                         )}
 
                         {/* Tooltip on hover */}
                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 px-2 py-1 rounded text-[8px] opacity-0 group-hover:opacity-100 whitespace-nowrap z-20 transition-opacity pointer-events-none text-white font-bold">
-                          {item.task}: {format(new Date(item.start), 'MMM d')} - {format(new Date(item.end), 'MMM d')}
+                          {item.task}: {format(new Date(item.start), 'MMM d')} {!item.isMilestone && `- ${format(new Date(item.end), 'MMM d')}`}
                         </div>
                       </div>
 

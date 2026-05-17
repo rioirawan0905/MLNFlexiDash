@@ -210,7 +210,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
           scale: 2,
           useCORS: true,
           backgroundColor: '#f8fafc',
-          logging: false
+          logging: false,
+          onclone: (clonedDoc) => {
+            // html2canvas fails on modern CSS like oklch(). 
+            // Since our PDF template uses standard hex colors, we can strip or replace these from the cloned head to prevent the parser from crashing.
+            Array.from(clonedDoc.getElementsByTagName('style')).forEach(style => {
+              if (style.innerHTML.includes('oklch')) {
+                style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#3b82f6');
+              }
+            });
+          }
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 0.85); // Compress it a bit for size

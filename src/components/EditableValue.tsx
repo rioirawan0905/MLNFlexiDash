@@ -9,9 +9,10 @@ interface EditableValueProps {
   className?: string;
   prefix?: string;
   suffix?: string;
+  onSave?: (newValue: string | number) => void;
 }
 
-export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, className, prefix, suffix }) => {
+export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, className, prefix, suffix, onSave }) => {
   const { isEditMode, updateData } = useDashboard();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -30,7 +31,11 @@ export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, cl
 
   const handleBlur = () => {
     setIsEditing(false);
-    updateData(dataKey, localValue);
+    if (onSave) {
+      onSave(localValue);
+    } else {
+      updateData(dataKey, localValue);
+    }
   };
 
   if (isEditMode && isEditing) {
