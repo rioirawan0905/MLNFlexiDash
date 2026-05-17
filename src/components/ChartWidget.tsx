@@ -26,34 +26,42 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
   };
 
   const renderChart = () => {
+    const COLORS = ['#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899'];
+
     if (chartType === 'pie') {
       return (
-        <div className="flex-1 w-full min-h-[180px]">
+        <div className="h-[200px] w-full p-2 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
-                innerRadius="40%"
-                outerRadius="70%"
+                innerRadius="50%"
+                outerRadius="80%"
                 paddingAngle={4}
                 dataKey="value"
                 cx="50%"
                 cy="50%"
-                label={showLabels ? { fontSize: 8, fill: 'currentColor' } : false}
+                label={showLabels ? { fontSize: 9, fill: 'currentColor', fontWeight: 'bold' } : false}
               >
                 {data.map((entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={entry.color || '#8884d8'} stroke="none" />
+                  <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} stroke="none" />
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px' }}
-                itemStyle={{ color: '#fff' }}
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid rgba(0,0,0,0.1)', 
+                  borderRadius: '12px', 
+                  fontSize: '10px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  backdropFilter: 'blur(10px)'
+                }}
+                itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
               />
               <Legend 
-                layout="horizontal" 
                 verticalAlign="bottom" 
-                align="center"
-                wrapperStyle={{ fontSize: '9px', paddingTop: '10px' }} 
+                height={36}
+                wrapperStyle={{ fontSize: '9px', color: 'currentColor', opacity: 0.8 }} 
               />
             </PieChart>
           </ResponsiveContainer>
@@ -73,9 +81,16 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
             <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900" />
             <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900" />
             <Tooltip 
-              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-              contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px' }}
-              itemStyle={{ color: '#fff' }}
+              cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+              contentStyle={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                border: '1px solid rgba(0,0,0,0.1)', 
+                borderRadius: '12px', 
+                fontSize: '10px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(10px)'
+              }}
+              itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
             />
             <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} label={showLabels ? { position: 'top', fontSize: 10, fill: 'currentColor' } : false} />
             <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '10px', color: 'currentColor' }} />
