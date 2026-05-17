@@ -19,14 +19,14 @@ export const MetricWidget: React.FC<MetricWidgetProps> = ({ config }) => {
           <EditableValue 
             value={data.label} 
             dataKey={`${config.dataKey}.label`}
-            className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-50 dark:opacity-40" 
+            className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-50" 
           />
         )}
         <div className="flex items-baseline gap-2">
           <EditableValue 
             value={data.value} 
             dataKey={`${config.dataKey}.value`}
-            className="text-5xl font-bold tracking-tighter text-slate-900 dark:text-white" 
+            className="text-5xl font-bold tracking-tighter text-slate-900" 
           />
         </div>
       </div>

@@ -70,8 +70,8 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
         )}
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900 dark:text-white" />
-            <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900 dark:text-white" />
+            <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900" />
+            <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} className="text-slate-900" />
             <Tooltip 
               cursor={{ fill: 'rgba(255,255,255,0.05)' }}
               contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px' }}
@@ -97,7 +97,7 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
       </div>
       
       {isEditMode && (
-        <div className="mt-4 p-4 border-t border-white/5 bg-white/5 rounded-xl space-y-4">
+        <div className="mt-4 p-4 border-t border-slate-100 bg-slate-50 rounded-xl space-y-4">
           <div className="flex items-center gap-2 px-1">
             <input 
               type="checkbox"

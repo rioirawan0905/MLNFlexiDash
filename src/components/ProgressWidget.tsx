@@ -23,14 +23,14 @@ export const ProgressWidget: React.FC<ProgressWidgetProps> = ({ config }) => {
             dataKey={`${config.dataKey}.status`}
             className="text-[10px] font-bold uppercase opacity-40 tracking-widest"
           />
-          <div className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white flex items-baseline gap-1">
+          <div className="text-4xl font-black tracking-tighter text-slate-900 flex items-baseline gap-1">
             <EditableValue value={String(data.percentage)} dataKey={`${config.dataKey}.percentage`} />
             <span className="text-xl opacity-20">%</span>
           </div>
         </div>
       </div>
 
-      <div className="relative h-4 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+      <div className="relative h-4 bg-slate-200 rounded-full overflow-hidden">
         <motion.div 
           className="absolute inset-y-0 left-0 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]"
           initial={{ width: 0 }}

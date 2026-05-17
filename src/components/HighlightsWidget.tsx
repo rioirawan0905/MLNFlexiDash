@@ -50,7 +50,7 @@ export const HighlightsWidget: React.FC<HighlightsWidgetProps> = ({ config }) =>
               <EditableValue 
                 value={cat.category} 
                 dataKey={`${config.dataKey}[${i}].category`} 
-                className="text-[11px] font-bold uppercase tracking-widest text-slate-900 dark:text-white"
+                className="text-[11px] font-bold uppercase tracking-widest text-slate-900"
               />
             </div>
             {isEditMode && (
@@ -62,13 +62,13 @@ export const HighlightsWidget: React.FC<HighlightsWidgetProps> = ({ config }) =>
               </button>
             )}
           </div>
-          <ul className="space-y-3 pl-4 border-l border-white/10">
+          <ul className="space-y-3 pl-4 border-l border-slate-200">
             {cat.items.map((item: string, j: number) => (
               <li key={j} className="group/item flex items-center gap-2">
                 <EditableValue 
                   value={item} 
                   dataKey={`${config.dataKey}[${i}].items[${j}]`} 
-                  className="text-[12px] leading-relaxed opacity-90 flex-1 text-slate-800 dark:text-white"
+                  className="text-[12px] leading-relaxed opacity-90 flex-1 text-slate-800"
                   prefix="▪ "
                 />
                 {isEditMode && (
@@ -97,7 +97,7 @@ export const HighlightsWidget: React.FC<HighlightsWidgetProps> = ({ config }) =>
       {isEditMode && (
         <button 
           onClick={addCategory}
-          className="w-full mt-4 py-3 border border-dashed border-white/10 rounded-xl text-[10px] font-bold uppercase text-blue-400 hover:bg-blue-400/5 transition-all flex items-center justify-center gap-2 tracking-widest"
+          className="w-full mt-4 py-3 border border-dashed border-slate-200 rounded-xl text-[10px] font-bold uppercase text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 tracking-widest"
         >
           <Plus size={16} /> Add Main Highlight
         </button>

@@ -51,7 +51,7 @@ const DashboardContent: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center font-mono text-slate-900 dark:text-slate-100">
+      <div className="min-h-screen flex items-center justify-center font-mono text-slate-900">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span className="uppercase tracking-[0.2em] font-bold opacity-30 text-xs">Loading Analytics...</span>
@@ -61,7 +61,7 @@ const DashboardContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen text-slate-900 dark:text-white">
+    <div className="min-h-screen text-slate-900">
       <Header />
       <main className="max-w-[1700px] mx-auto p-4 sm:p-6 lg:p-10">
         <DndContext 
@@ -83,14 +83,14 @@ const DashboardContent: React.FC = () => {
                 <div className="relative">
                   <button 
                     onClick={() => setShowAddMenu(!showAddMenu)}
-                    className="widget-card min-h-[150px] w-full border-dashed border-2 border-white/10 flex flex-col items-center justify-center gap-3 opacity-30 hover:opacity-100 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all text-slate-400 hover:text-blue-400 group"
+                    className="widget-card min-h-[150px] w-full border-dashed border-2 border-slate-200 flex flex-col items-center justify-center gap-3 opacity-30 hover:opacity-100 hover:border-blue-500/50 hover:bg-blue-50/50 transition-all text-slate-400 hover:text-blue-500 group"
                   >
-                    <Plus size={32} className={`group-hover:scale-110 transition-transform ${showAddMenu ? 'rotate-45 text-red-400' : ''}`} />
+                    <Plus size={32} className={`group-hover:scale-110 transition-transform ${showAddMenu ? 'rotate-45 text-red-500' : ''}`} />
                     <span className="font-mono text-[10px] uppercase font-bold tracking-widest">{showAddMenu ? t('cancel') : t('add_widget')}</span>
                   </button>
 
                   {showAddMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-full bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 grid grid-cols-2 gap-1 z-50 animate-in fade-in zoom-in-95">
+                    <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-2xl p-2 grid grid-cols-2 gap-1 z-50 animate-in fade-in zoom-in-95">
                       {(['metric', 'chart', 'table', 'highlights', 'timeline', 'progress'] as const).map(type => (
                         <button
                           key={type}
@@ -98,7 +98,7 @@ const DashboardContent: React.FC = () => {
                             addWidget(type);
                             setShowAddMenu(false);
                           }}
-                          className="px-3 py-2 text-[10px] font-bold uppercase rounded-lg hover:bg-blue-600 hover:text-white text-slate-400 transition-colors border border-white/5"
+                          className="px-3 py-2 text-[10px] font-bold uppercase rounded-lg hover:bg-blue-600 hover:text-white text-slate-500 transition-colors border border-slate-100 shadow-sm"
                         >
                           {type}
                         </button>
@@ -112,8 +112,8 @@ const DashboardContent: React.FC = () => {
         </DndContext>
       </main>
       
-      <footer className="mt-20 p-12 border-t border-slate-200 dark:border-white/5 opacity-60 dark:opacity-40">
-        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-[8px] uppercase font-bold tracking-widest text-slate-900 dark:text-white">
+      <footer className="mt-20 p-12 border-t border-slate-200 opacity-60">
+        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-[8px] uppercase font-bold tracking-widest text-slate-900">
           <div className="flex items-center gap-4 text-left">
             <span>&copy; 2026 FLEXIDASH SYSTEM</span>
             <span className="hidden md:inline">•</span>

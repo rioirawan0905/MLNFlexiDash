@@ -14,7 +14,7 @@
 
 @layer base {
   body {
-    @apply bg-[#020617] text-slate-100 font-sans antialiased transition-colors duration-500 selection:bg-blue-500/30;
+    @apply bg-slate-50 text-slate-900 font-sans antialiased transition-colors duration-500 selection:bg-blue-500/30;
     position: relative;
     overflow-x: hidden;
   }
@@ -27,7 +27,7 @@
     width: 60%;
     height: 60%;
     border-radius: 9999px;
-    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
     filter: blur(120px);
     z-index: -1;
     pointer-events: none;
@@ -41,15 +41,10 @@
     width: 70%;
     height: 70%;
     border-radius: 9999px;
-    background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
     filter: blur(150px);
     z-index: -1;
     pointer-events: none;
-  }
-
-  /* Light mode adjustments to maintain "Frosted" look */
-  html:not(.dark) body {
-    @apply bg-slate-50 text-slate-900;
   }
 }
 
@@ -59,22 +54,18 @@
   }
 
   .widget-card {
-    @apply bg-white/5 dark:bg-white/5 backdrop-blur-xl border border-white/10 dark:border-white/10 rounded-[24px] shadow-2xl overflow-hidden flex flex-col transition-all duration-300;
-  }
-
-  html:not(.dark) .widget-card {
-    @apply bg-white/60 backdrop-blur-md border-slate-200/50 shadow-xl;
+    @apply bg-white/60 backdrop-blur-md border border-slate-200/50 rounded-[24px] shadow-xl overflow-hidden flex flex-col transition-all duration-300;
   }
 
   .widget-header {
-    @apply border-b border-white/10 dark:border-white/10 px-6 py-3 flex justify-between items-center transition-colors;
+    @apply border-b border-slate-200/50 px-6 py-3 flex justify-between items-center transition-colors;
   }
 
   .widget-title {
-    @apply font-bold text-[11px] uppercase tracking-[0.2em] text-slate-900 dark:text-white opacity-90;
+    @apply font-bold text-[11px] uppercase tracking-[0.2em] text-slate-900 opacity-90;
   }
 
   .data-text {
-    @apply font-mono tracking-tighter text-slate-900 dark:text-white;
+    @apply font-mono tracking-tighter text-slate-900;
   }
 }

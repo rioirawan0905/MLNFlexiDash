@@ -57,14 +57,14 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
     <div className="overflow-x-auto p-2">
       <table className="w-full text-left text-[11px] font-mono">
         <thead>
-          <tr className="bg-white/5 border-b border-white/10 italic">
+          <tr className="bg-slate-50 border-b border-slate-200 italic">
             {data.columns.map((col: string, idx: number) => (
               <th key={idx} className="px-4 py-2 font-bold opacity-80 uppercase tracking-wider group/th">
                 <div className="flex items-center gap-2">
                   <EditableValue 
                     value={col} 
                     dataKey={`${config.dataKey}.columns[${idx}]`}
-                    className="text-[10px] font-bold text-slate-900 dark:text-white"
+                    className="text-[10px] font-bold text-slate-900"
                   />
                   {isEditMode && data.columns.length > 1 && (
                     <button 
@@ -92,13 +92,13 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
         </thead>
         <tbody>
           {data.rows.map((row: any, i: number) => (
-            <tr key={i} className="group border-b border-white/5 hover:bg-white/5 transition-colors">
+            <tr key={i} className="group border-b border-slate-100 hover:bg-slate-50 transition-colors">
               {data.columns.map((col: string) => (
                 <td key={col} className="px-4 py-3">
                   <EditableValue 
                     value={row[col]} 
                     dataKey={`${config.dataKey}.rows[${i}].${col}`} 
-                    className="text-slate-900 dark:text-white"
+                    className="text-slate-900"
                   />
                 </td>
               ))}
@@ -119,7 +119,7 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
       {isEditMode && (
         <button 
           onClick={addRow}
-          className="w-full mt-2 py-2 border border-dashed border-white/10 rounded-lg text-[10px] font-bold uppercase text-slate-500 hover:text-blue-400 hover:border-blue-400/50 transition-all flex items-center justify-center gap-2"
+          className="w-full mt-2 py-2 border border-dashed border-slate-200 rounded-lg text-[10px] font-bold uppercase text-slate-400 hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={14} /> Add Row
         </button>

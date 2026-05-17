@@ -63,7 +63,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
   };
 
   const toggleTextColor = () => {
-    const colors = ['', 'text-blue-500', 'text-emerald-500', 'text-rose-500', 'text-amber-500', 'text-violet-500', 'text-slate-900 dark:text-white font-black'];
+    const colors = ['', 'text-blue-500', 'text-emerald-500', 'text-rose-500', 'text-amber-500', 'text-violet-500', 'text-slate-900 font-black'];
     const current = config.options?.textColor || '';
     const nextIndex = (colors.indexOf(current) + 1) % colors.length;
     updateWidget(config.id, { options: { ...config.options, textColor: colors[nextIndex] } });
@@ -90,10 +90,10 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             <input 
               value={config.title}
               onChange={(e) => updateWidget(config.id, { title: e.target.value })}
-              className="bg-transparent border-b border-blue-500/30 outline-none widget-title opacity-100 text-slate-900 dark:text-white w-full min-w-[50px]"
+              className="bg-transparent border-b border-blue-500/30 outline-none widget-title opacity-100 text-slate-900 w-full min-w-[50px]"
             />
           ) : (
-            <span className="widget-title truncate text-slate-900 dark:text-white">{config.title}</span>
+            <span className="widget-title truncate text-slate-900">{config.title}</span>
           )}
         </div>
         
@@ -102,7 +102,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             {config.type === 'chart' && (
               <button 
                 onClick={toggleChartType}
-                className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all text-[9px] font-bold font-mono"
+                className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all text-[9px] font-bold font-mono"
                 title="Switch Chart Type"
               >
                 {config.options?.chartType === 'pie' ? 'BAR' : 'PIE'}
@@ -110,10 +110,10 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             )}
             <button 
               onClick={toggleTextColor}
-              className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all"
               title="Change Text Color"
             >
-              <div className={cn("w-2.5 h-2.5 rounded-full border border-black/10 dark:border-white/20", 
+              <div className={cn("w-2.5 h-2.5 rounded-full border border-black/10", 
                 config.options?.textColor?.includes('blue') ? 'bg-blue-500' : 
                 config.options?.textColor?.includes('emerald') ? 'bg-emerald-500' : 
                 config.options?.textColor?.includes('rose') ? 'bg-rose-500' : 
@@ -124,7 +124,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             </button>
             <button 
               onClick={toggleSpan}
-              className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all"
               title="Resize Widget"
             >
               {config.gridSpan === 'col-span-2' ? <Minimize2 size={11} /> : <Maximize2 size={11} />}

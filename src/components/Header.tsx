@@ -13,7 +13,6 @@ export const Header: React.FC = () => {
     isEditMode, 
     toggleEditMode, 
     saveDashboard, 
-    toggleTheme, 
     setLanguage,
     switchDashboard,
     addDashboard,
@@ -24,29 +23,29 @@ export const Header: React.FC = () => {
   const [showDashSelector, setShowDashSelector] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-white/5 backdrop-blur-2xl border-b border-slate-200 dark:border-white/10 px-6 py-4 flex flex-wrap justify-between items-center gap-4 text-slate-900 dark:text-white">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200 px-6 py-4 flex flex-wrap justify-between items-center gap-4 text-slate-900">
       <div className="flex items-center gap-6">
         <div className="relative">
           <button 
             onClick={() => setShowDashSelector(!showDashSelector)}
-            className="flex items-center gap-2 text-xl font-bold tracking-tight uppercase hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="flex items-center gap-2 text-xl font-bold tracking-tight uppercase hover:text-blue-600 transition-colors"
           >
             {isEditMode ? (
               <input 
                 autoFocus
                 value={activeDashboard?.name || ''}
                 onChange={(e) => updateDashboardName(e.target.value)}
-                className="bg-transparent border-b border-blue-500 outline-none w-[300px] text-slate-900 dark:text-white"
+                className="bg-transparent border-b border-blue-500 outline-none w-[300px] text-slate-900"
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <span className="text-slate-900 dark:text-white">{activeDashboard?.name || t('dashboard_title')}</span>
+              <span className="text-slate-900">{activeDashboard?.name || t('dashboard_title')}</span>
             )}
-            <ChevronDown size={18} className={`transition-transform text-slate-400 dark:text-white ${showDashSelector ? 'rotate-180' : ''}`} />
+            <ChevronDown size={18} className={`transition-transform text-slate-400 ${showDashSelector ? 'rotate-180' : ''}`} />
           </button>
 
           {showDashSelector && (
-            <div className="absolute top-full left-0 mt-2 w-[250px] bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-1">
+            <div className="absolute top-full left-0 mt-2 w-[250px] bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-1">
               <div className="p-2 space-y-1">
                 {multiState?.dashboards.map(dash => (
                   <div key={dash.id} className="group flex items-center gap-2">
@@ -55,7 +54,7 @@ export const Header: React.FC = () => {
                         switchDashboard(dash.id);
                         setShowDashSelector(false);
                       }}
-                      className={`flex-1 text-left px-3 py-2 rounded-lg text-xs font-bold uppercase transition-colors ${dash.id === activeDashboard?.id ? 'bg-blue-600 text-white' : 'hover:bg-white/5 text-slate-400'}`}
+                      className={`flex-1 text-left px-3 py-2 rounded-lg text-xs font-bold uppercase transition-colors ${dash.id === activeDashboard?.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'hover:bg-slate-50 text-slate-500'}`}
                     >
                       {dash.name}
                     </button>
@@ -75,7 +74,7 @@ export const Header: React.FC = () => {
                       addDashboard();
                       setShowDashSelector(false);
                     }}
-                    className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-3 rounded-lg text-[10px] font-bold uppercase border border-dashed border-white/20 text-slate-500 hover:text-white hover:border-white/40 transition-all"
+                    className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-3 rounded-lg text-[10px] font-bold uppercase border border-dashed border-slate-200 text-slate-400 hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-50/50 transition-all"
                   >
                     <Plus size={14} /> {t('add_dashboard', 'Add Dashboard')}
                   </button>
@@ -85,7 +84,7 @@ export const Header: React.FC = () => {
           )}
         </div>
 
-        <div className="hidden lg:flex gap-2 text-[10px] font-mono opacity-60 dark:opacity-40 font-bold uppercase">
+        <div className="hidden lg:flex gap-2 text-[10px] font-mono opacity-60 font-bold uppercase">
           <span>{format(new Date(), 'MMMM do, yyyy')}</span>
           <span>•</span>
           <button 
@@ -98,33 +97,26 @@ export const Header: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex border border-slate-200 dark:border-white/10 rounded-lg overflow-hidden bg-slate-100 dark:bg-white/5">
+        <div className="flex border border-slate-200 rounded-lg overflow-hidden bg-slate-100">
           <button 
             onClick={() => setLanguage('en')}
-            className={`px-3 py-1.5 text-[10px] uppercase font-bold transition-colors ${multiState?.preferences.language === 'en' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400'}`}
+            className={`px-3 py-1.5 text-[10px] uppercase font-bold transition-colors ${multiState?.preferences.language === 'en' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 text-slate-500'}`}
           >
             EN
           </button>
           <button 
             onClick={() => setLanguage('id')}
-            className={`px-3 py-1.5 text-[10px] uppercase font-bold border-l border-slate-200 dark:border-white/10 transition-colors ${multiState?.preferences.language === 'id' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400'}`}
+            className={`px-3 py-1.5 text-[10px] uppercase font-bold border-l border-slate-200 transition-colors ${multiState?.preferences.language === 'id' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 text-slate-500'}`}
           >
             ID
           </button>
         </div>
 
-        <button 
-          onClick={toggleTheme}
-          className="p-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-white"
-        >
-          {multiState?.preferences.theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-        </button>
-
         {isEditMode ? (
           <div className="flex gap-2">
             <button 
               onClick={toggleEditMode}
-              className="px-4 py-2 text-xs font-bold border border-slate-200 dark:border-white/10 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-all flex items-center gap-2 text-slate-600 dark:text-white"
+              className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg hover:bg-slate-100 transition-all flex items-center gap-2 text-slate-600"
             >
               <X size={16} /> {t('cancel')}
             </button>
@@ -138,7 +130,7 @@ export const Header: React.FC = () => {
         ) : (
           <button 
             onClick={toggleEditMode}
-            className="px-4 py-2 text-xs font-bold bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition-all flex items-center gap-2 text-slate-600 dark:text-white"
+            className="px-4 py-2 text-xs font-bold bg-slate-100 border border-slate-200 rounded-lg hover:bg-slate-200 transition-all flex items-center gap-2 text-slate-600"
           >
             <Edit3 size={16} /> {t('edit_mode')}
           </button>

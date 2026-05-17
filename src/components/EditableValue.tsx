@@ -41,14 +41,14 @@ export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, cl
         onChange={(e) => setLocalValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur()}
-        className={cn("bg-slate-100 dark:bg-white/5 border-b border-blue-500 outline-none w-full px-1 rounded-t text-slate-900 dark:text-white", className)}
+        className={cn("bg-slate-100 border-b border-blue-500 outline-none w-full px-1 rounded-t text-slate-900", className)}
       />
     );
   }
 
   return (
     <div 
-      className={cn("group flex items-center gap-2 cursor-pointer text-slate-900 dark:text-white", className)}
+      className={cn("group flex items-center gap-2 cursor-pointer text-slate-900", className)}
       onClick={() => isEditMode && setIsEditing(true)}
     >
       <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">

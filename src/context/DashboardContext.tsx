@@ -16,7 +16,6 @@ interface DashboardContextType {
   deleteWidget: (widgetId: string) => void;
   reorderWidgets: (oldIndex: number, newIndex: number) => void;
   setLanguage: (lang: string) => void;
-  toggleTheme: () => void;
   saveDashboard: () => Promise<void>;
   switchDashboard: (id: string) => void;
   addDashboard: () => void;
@@ -35,13 +34,13 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   useEffect(() => {
     api.getState().then(res => {
       if (res.success) {
-        setMultiState(res.data);
+        const state = {
+          ...res.data,
+          preferences: { ...res.data.preferences, theme: 'light' as const }
+        };
+        setMultiState(state);
         i18n.changeLanguage(res.data.preferences.language);
-        if (res.data.preferences.theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        document.documentElement.classList.remove('dark');
       }
       setIsLoading(false);
     });
@@ -119,22 +118,6 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       ...prev, 
       preferences: { ...prev.preferences, language: lang } 
     } : null);
-  };
-
-  const toggleTheme = () => {
-    setMultiState(prev => {
-      if (!prev) return null;
-      const newTheme = prev.preferences.theme === 'light' ? 'dark' : 'light';
-      if (newTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      return { 
-        ...prev, 
-        preferences: { ...prev.preferences, theme: newTheme } 
-      };
-    });
   };
 
   const switchDashboard = (id: string) => {
@@ -225,7 +208,6 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       deleteWidget,
       reorderWidgets,
       setLanguage,
-      toggleTheme,
       saveDashboard,
       switchDashboard,
       addDashboard,
