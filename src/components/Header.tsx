@@ -16,6 +16,7 @@ export const Header: React.FC = () => {
     hasUnsavedChanges,
     toggleEditMode, 
     saveDashboard, 
+    revertState,
     setLanguage,
     switchDashboard,
     addDashboard,
@@ -130,7 +131,7 @@ export const Header: React.FC = () => {
             <button 
               onClick={() => {
                 if (hasUnsavedChanges && !confirm('Discard unsaved changes?')) return;
-                window.location.reload(); // Simplest way to discard deep state changes for now, or we could fetchState again
+                revertState();
               }}
               className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all flex items-center gap-2 text-slate-600"
             >

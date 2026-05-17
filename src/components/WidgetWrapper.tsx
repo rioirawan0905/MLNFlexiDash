@@ -50,7 +50,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
   };
 
   const toggleSpan = () => {
-    const spans = ['col-span-1', 'col-span-2', 'col-span-3', 'col-span-4'];
+    const spans = ['col-span-1', 'col-span-2', 'col-span-3', 'col-span-4', 'col-span-full'];
     const current = config.gridSpan || 'col-span-2';
     const nextIndex = (spans.indexOf(current) + 1) % spans.length;
     updateWidget(config.id, { gridSpan: spans[nextIndex] });
@@ -58,9 +58,10 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
 
   const toggleChartType = () => {
     if (config.type !== 'chart') return;
+    const types = ['bar', 'pie', 'radar'];
     const current = config.options?.chartType || 'bar';
-    const next = current === 'bar' ? 'pie' : 'bar';
-    updateWidget(config.id, { options: { ...config.options, chartType: next } });
+    const nextIndex = (types.indexOf(current) + 1) % types.length;
+    updateWidget(config.id, { options: { ...config.options, chartType: types[nextIndex] } });
   };
 
   const toggleTextColor = () => {
@@ -106,7 +107,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
                 className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all text-[9px] font-bold font-mono"
                 title="Switch Chart Type"
               >
-                {config.options?.chartType === 'pie' ? 'BAR' : 'PIE'}
+                {(config.options?.chartType || 'bar').toUpperCase()}
               </button>
             )}
             <button 
@@ -128,7 +129,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
               className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all"
               title="Resize Widget"
             >
-              {config.gridSpan === 'col-span-2' ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+              {config.gridSpan === 'col-span-full' ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
             </button>
             <button 
               onClick={() => deleteWidget(config.id)}

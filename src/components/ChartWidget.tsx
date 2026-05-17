@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 import { WidgetConfig } from '../types';
 import { useDashboard } from '../context/DashboardContext';
 import { EditableValue } from './EditableValue';
@@ -27,6 +27,37 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
 
   const renderChart = () => {
     const COLORS = ['#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899'];
+
+    if (chartType === 'radar') {
+      return (
+        <div className="h-[200px] w-full p-2 relative">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+              <PolarGrid stroke="#e2e8f0" />
+              <PolarAngleAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid rgba(0,0,0,0.1)', 
+                  borderRadius: '12px', 
+                  fontSize: '10px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  backdropFilter: 'blur(10px)'
+                }}
+                itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
+              />
+              <Radar
+                name="Value"
+                dataKey="value"
+                stroke="#3b82f6"
+                fill="#3b82f6"
+                fillOpacity={0.6}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      );
+    }
 
     if (chartType === 'pie') {
       return (

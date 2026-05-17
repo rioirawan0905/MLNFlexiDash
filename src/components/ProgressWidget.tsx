@@ -14,6 +14,14 @@ export const ProgressWidget: React.FC<ProgressWidgetProps> = ({ config }) => {
 
   const percentage = Math.min(100, Math.max(0, Number(data.percentage)));
 
+  const getProgressColor = (pct: number) => {
+    if (pct <= 33) return { bg: 'bg-rose-500', shadow: 'rgba(244,63,94,0.5)' };
+    if (pct <= 66) return { bg: 'bg-amber-500', shadow: 'rgba(245,158,11,0.5)' };
+    return { bg: 'bg-blue-500', shadow: 'rgba(59,130,246,0.5)' };
+  };
+
+  const { bg, shadow } = getProgressColor(percentage);
+
   return (
     <div className="flex flex-col h-full p-4 justify-center">
       <div className="flex justify-between items-end mb-4">
@@ -32,7 +40,8 @@ export const ProgressWidget: React.FC<ProgressWidgetProps> = ({ config }) => {
 
       <div className="relative h-4 bg-slate-200 rounded-full overflow-hidden">
         <motion.div 
-          className="absolute inset-y-0 left-0 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+          className={`absolute inset-y-0 left-0 ${bg} transition-colors duration-500`}
+          style={{ boxShadow: `0 0 20px ${shadow}` }}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 1, ease: 'easeOut' }}

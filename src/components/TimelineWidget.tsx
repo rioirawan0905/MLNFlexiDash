@@ -2,15 +2,14 @@ import React from 'react';
 import { WidgetConfig } from '../types';
 import { useDashboard } from '../context/DashboardContext';
 import { EditableValue } from './EditableValue';
-import { Plus, Trash2, Calendar, Link as LinkIcon, Flag } from 'lucide-react';
-import { format, differenceInDays, addDays, startOfMonth, endOfMonth } from 'date-fns';
+import { Plus, Trash2, Calendar, Flag } from 'lucide-react';
+import { format, differenceInDays, addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfQuarter, endOfQuarter, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 
 interface TimelineItem {
   id: string;
   task: string;
   start: string;
   end: string;
-  predecessor?: string;
   isMilestone?: boolean;
 }
 
@@ -19,8 +18,9 @@ interface TimelineWidgetProps {
 }
 
 export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
-  const { activeDashboard, isEditMode, updateData } = useDashboard();
+  const { activeDashboard, isEditMode, updateData, updateWidget } = useDashboard();
   const data = activeDashboard?.data[config.dataKey] || [];
+  const scale = config.options?.scale || 'month'; // 'day', 'week', 'month', 'quarter'
 
   const addItem = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -45,10 +45,35 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
     ));
   };
 
+  const setScale = (newScale: string) => {
+    updateWidget(config.id, { options: { ...config.options, scale: newScale } });
+  };
+
   // Basic Gantt Logic
   const allDates = data.flatMap((item: TimelineItem) => [new Date(item.start), new Date(item.end)]);
-  const minDate = allDates.length > 0 ? startOfMonth(new Date(Math.min(...allDates.map(d => d.getTime())))) : startOfMonth(new Date());
-  const maxDate = allDates.length > 0 ? endOfMonth(addDays(new Date(Math.max(...allDates.map(d => d.getTime()))), 30)) : endOfMonth(addDays(new Date(), 30));
+  
+  let minDate: Date;
+  let maxDate: Date;
+
+  if (allDates.length > 0) {
+    const baseMin = new Date(Math.min(...allDates.map(d => d.getTime())));
+    const baseMax = new Date(Math.max(...allDates.map(d => d.getTime())));
+    
+    if (scale === 'day' || scale === 'week') {
+      minDate = startOfWeek(baseMin);
+      maxDate = endOfWeek(addDays(baseMax, 7));
+    } else if (scale === 'quarter') {
+      minDate = startOfQuarter(baseMin);
+      maxDate = endOfQuarter(baseMax);
+    } else {
+      minDate = startOfMonth(baseMin);
+      maxDate = endOfMonth(addDays(baseMax, 30));
+    }
+  } else {
+    minDate = startOfMonth(new Date());
+    maxDate = endOfMonth(addDays(new Date(), 30));
+  }
+
   const totalDays = Math.max(1, differenceInDays(maxDate, minDate));
 
   const getPosition = (dateStr: string) => {
@@ -57,14 +82,55 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
     return (daysSinceStart / totalDays) * 100;
   };
 
+  const renderGridLines = () => {
+    let intervals: Date[] = [];
+    if (scale === 'day') {
+      intervals = eachDayOfInterval({ start: minDate, end: maxDate });
+    } else if (scale === 'week') {
+      intervals = eachWeekOfInterval({ start: minDate, end: maxDate });
+    } else if (scale === 'quarter') {
+      // rough approximation for quarters
+      intervals = eachMonthOfInterval({ start: minDate, end: maxDate }).filter((_, i) => i % 3 === 0);
+    } else {
+      intervals = eachMonthOfInterval({ start: minDate, end: maxDate });
+    }
+
+    return intervals.map((date, i) => (
+      <div 
+        key={i} 
+        className="absolute inset-y-0 border-l border-slate-200/60 pointer-events-none"
+        style={{ left: `${getPosition(date.toISOString())}%` }}
+      >
+        <span className="absolute top-[-20px] left-1 text-[8px] font-bold text-slate-400 whitespace-nowrap">
+          {scale === 'day' ? format(date, 'd') : scale === 'week' ? `W${format(date, 'w')}` : format(date, 'MMM')}
+        </span>
+      </div>
+    ));
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-x-auto min-h-[300px]">
-        <div className="min-w-[800px] p-4">
+        <div className="min-w-[800px] p-4 pt-10">
           {/* Header */}
           <div className="flex border-b border-slate-200 pb-2 mb-4 font-mono text-[10px] uppercase font-bold opacity-70">
-            <div className="w-1/3 text-slate-900">Task Details</div>
-            <div className="w-2/3 pl-8 text-slate-900">Timeline ({format(minDate, 'MMM yyyy')} - {format(maxDate, 'MMM yyyy')})</div>
+            <div className="w-1/4 text-slate-900">Task Details</div>
+            <div className="w-3/4 pl-8 text-slate-900 flex justify-between items-center">
+              <span>Timeline ({format(minDate, 'MMM d, yyyy')} - {format(maxDate, 'MMM d, yyyy')})</span>
+              {isEditMode && (
+                <div className="flex gap-1 bg-slate-100 p-0.5 rounded-lg">
+                  {['day', 'week', 'month', 'quarter'].map(s => (
+                    <button 
+                      key={s}
+                      onClick={() => setScale(s)}
+                      className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase transition-all ${scale === s ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Items */}
@@ -72,12 +138,12 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
             {data.map((item: TimelineItem, idx: number) => {
               const startPos = getPosition(item.start);
               const endPos = getPosition(item.end);
-              const width = Math.max(2, endPos - startPos);
+              const width = Math.max(1.5, endPos - startPos);
 
               return (
                 <div key={item.id} className="group flex items-center">
                   {/* Info */}
-                  <div className="w-1/3 space-y-1">
+                  <div className="w-1/4 space-y-1">
                     <div className="flex items-center gap-2">
                        {isEditMode && (
                         <button 
@@ -91,7 +157,7 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                       <EditableValue 
                         value={item.task} 
                         dataKey={`${config.dataKey}[${idx}].task`}
-                        className="text-[11px] font-bold text-slate-900"
+                        className="text-[11px] font-bold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis"
                       />
                     </div>
                     <div className="flex items-center gap-4 text-[9px] opacity-70 font-mono text-slate-500">
@@ -101,26 +167,18 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                         <span>-</span>
                         <EditableValue value={item.end} dataKey={`${config.dataKey}[${idx}].end`} />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <LinkIcon size={10} />
-                        <EditableValue 
-                          value={item.predecessor || 'None'} 
-                          dataKey={`${config.dataKey}[${idx}].predecessor`} 
-                          prefix="Pre: "
-                        />
-                      </div>
                     </div>
                   </div>
 
                   {/* Bar Area */}
-                  <div className="w-2/3 pl-8">
+                  <div className="w-3/4 pl-8">
                     <div className="relative h-8 flex items-center group/bar">
-                      {/* Grid line */}
-                      <div className="absolute inset-y-0 left-0 right-0 border-l border-slate-200 pointer-events-none" />
+                      {/* Grid lines */}
+                      {renderGridLines()}
                       
                       {/* The Bar */}
                       <div 
-                        className={`absolute h-2 rounded-full transition-all duration-500 ${item.isMilestone ? 'bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]' : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]'}`}
+                        className={`absolute h-3 rounded-full transition-all duration-500 z-10 ${item.isMilestone ? 'bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}
                         style={{ 
                           left: `${startPos}%`, 
                           width: `${width}%`
@@ -128,11 +186,11 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                       >
                         {/* Milestone Marker */}
                         {item.isMilestone && (
-                          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-yellow-500 rotate-45 border-2 border-white" />
+                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-yellow-500 rotate-45 border-2 border-white shadow-lg" />
                         )}
 
                         {/* Tooltip on hover */}
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 px-2 py-1 rounded text-[8px] opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 transition-opacity pointer-events-none text-white">
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 px-2 py-1 rounded text-[8px] opacity-0 group-hover:opacity-100 whitespace-nowrap z-20 transition-opacity pointer-events-none text-white font-bold">
                           {item.task}: {format(new Date(item.start), 'MMM d')} - {format(new Date(item.end), 'MMM d')}
                         </div>
                       </div>

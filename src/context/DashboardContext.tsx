@@ -24,6 +24,7 @@ interface DashboardContextType {
   deleteDashboard: (id: string) => void;
   updateDashboardName: (name: string) => void;
   addWidget: (type: WidgetType) => void;
+  revertState: () => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -221,6 +222,25 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   };
 
+  const revertState = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.getState();
+      if (res.success) {
+        const state = {
+          ...res.data,
+          preferences: { ...res.data.preferences, theme: 'light' as const }
+        };
+        setMultiState(state);
+        i18n.changeLanguage(state.preferences.language);
+        setIsEditMode(false);
+        setHasUnsavedChanges(false);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <DashboardContext.Provider value={{
       multiState,
@@ -240,7 +260,8 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       addDashboard,
       deleteDashboard,
       updateDashboardName,
-      addWidget
+      addWidget,
+      revertState
     }}>
       {children}
     </DashboardContext.Provider>
