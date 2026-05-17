@@ -62,9 +62,9 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
       <div className="flex-1 overflow-x-auto min-h-[300px]">
         <div className="min-w-[800px] p-4">
           {/* Header */}
-          <div className="flex border-b border-white/5 pb-2 mb-4 font-mono text-[10px] uppercase font-bold opacity-40">
-            <div className="w-1/3">Task Details</div>
-            <div className="w-2/3 pl-8">Timeline ({format(minDate, 'MMM yyyy')} - {format(maxDate, 'MMM yyyy')})</div>
+          <div className="flex border-b border-white/5 pb-2 mb-4 font-mono text-[10px] uppercase font-bold opacity-70">
+            <div className="w-1/3 text-slate-900 dark:text-white">Task Details</div>
+            <div className="w-2/3 pl-8 text-slate-900 dark:text-white">Timeline ({format(minDate, 'MMM yyyy')} - {format(maxDate, 'MMM yyyy')})</div>
           </div>
 
           {/* Items */}
@@ -94,7 +94,7 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                         className="text-[11px] font-bold text-slate-900 dark:text-white"
                       />
                     </div>
-                    <div className="flex items-center gap-4 text-[9px] opacity-40 font-mono">
+                    <div className="flex items-center gap-4 text-[9px] opacity-70 font-mono text-slate-500 dark:text-white">
                       <div className="flex items-center gap-1">
                         <Calendar size={10} />
                         <EditableValue value={item.start} dataKey={`${config.dataKey}[${idx}].start`} />

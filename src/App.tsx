@@ -112,8 +112,8 @@ const DashboardContent: React.FC = () => {
         </DndContext>
       </main>
       
-      <footer className="mt-20 p-12 border-t border-slate-200 dark:border-white/5 opacity-40 dark:opacity-20">
-        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-[8px] uppercase font-bold tracking-widest">
+      <footer className="mt-20 p-12 border-t border-slate-200 dark:border-white/5 opacity-60 dark:opacity-40">
+        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-[8px] uppercase font-bold tracking-widest text-slate-900 dark:text-white">
           <div className="flex items-center gap-4 text-left">
             <span>&copy; 2026 FLEXIDASH SYSTEM</span>
             <span className="hidden md:inline">•</span>

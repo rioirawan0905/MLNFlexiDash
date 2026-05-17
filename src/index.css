@@ -71,7 +71,7 @@
   }
 
   .widget-title {
-    @apply font-bold text-[11px] uppercase tracking-[0.2em] text-slate-800 dark:text-white opacity-90;
+    @apply font-bold text-[11px] uppercase tracking-[0.2em] text-slate-900 dark:text-white opacity-90;
   }
 
   .data-text {

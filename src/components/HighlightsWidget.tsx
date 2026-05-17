@@ -68,7 +68,7 @@ export const HighlightsWidget: React.FC<HighlightsWidgetProps> = ({ config }) =>
                 <EditableValue 
                   value={item} 
                   dataKey={`${config.dataKey}[${i}].items[${j}]`} 
-                  className="text-[12px] leading-relaxed opacity-80 flex-1 text-slate-800 dark:text-slate-200"
+                  className="text-[12px] leading-relaxed opacity-90 flex-1 text-slate-800 dark:text-white"
                   prefix="▪ "
                 />
                 {isEditMode && (

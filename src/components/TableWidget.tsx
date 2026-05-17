@@ -64,7 +64,7 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
                   <EditableValue 
                     value={col} 
                     dataKey={`${config.dataKey}.columns[${idx}]`}
-                    className="text-[10px] font-bold text-slate-800 dark:text-white"
+                    className="text-[10px] font-bold text-slate-900 dark:text-white"
                   />
                   {isEditMode && data.columns.length > 1 && (
                     <button 
