@@ -49,10 +49,16 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
     }
   };
 
-  const toggleSpan = () => {
-    const spans = ['col-span-1', 'col-span-2', 'col-span-3', 'col-span-4', 'col-span-full'];
+  const changeSpan = (delta: number) => {
+    const spans = ['col-span-1', 'col-span-2', 'col-span-3', 'col-span-4', 'col-span-5', 'col-span-6', 'col-span-7', 'col-span-8', 'col-span-full'];
     const current = config.gridSpan || 'col-span-2';
-    const nextIndex = (spans.indexOf(current) + 1) % spans.length;
+    let index = spans.indexOf(current);
+    if (index === -1) index = 1; // default to 2
+    
+    let nextIndex = index + delta;
+    if (nextIndex < 0) nextIndex = 0;
+    if (nextIndex >= spans.length) nextIndex = spans.length - 1;
+    
     updateWidget(config.id, { gridSpan: spans[nextIndex] });
   };
 
@@ -125,11 +131,20 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
               )} />
             </button>
             <button 
-              onClick={toggleSpan}
-              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all"
-              title="Resize Widget"
+              onClick={() => changeSpan(-1)}
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-20"
+              title="Shrink Widget"
+              disabled={config.gridSpan === 'col-span-1'}
             >
-              {config.gridSpan === 'col-span-full' ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+              <Minimize2 size={11} />
+            </button>
+            <button 
+              onClick={() => changeSpan(1)}
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-20"
+              title="Expand Widget"
+              disabled={config.gridSpan === 'col-span-full'}
+            >
+              <Maximize2 size={11} />
             </button>
             <button 
               onClick={() => deleteWidget(config.id)}

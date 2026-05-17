@@ -93,9 +93,13 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         if (arrayMatch) {
           const [, name, indexStr] = arrayMatch;
           const index = parseInt(indexStr);
-          if (!current[name]) current[name] = [];
-          current[name] = [...current[name]];
+          if (!current[name] || !Array.isArray(current[name])) {
+            current[name] = [];
+          } else {
+            current[name] = [...current[name]];
+          }
           if (!current[name][index]) current[name][index] = {};
+          else current[name][index] = { ...current[name][index] };
           current = current[name][index];
         } else {
           if (!current[part]) current[part] = {};

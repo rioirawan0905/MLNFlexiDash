@@ -31,10 +31,20 @@ export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, cl
 
   const handleBlur = () => {
     setIsEditing(false);
+    let valueToSave: string | number = localValue;
+    
+    // Try to preserve numeric type if the original value was a number
+    if (typeof value === 'number') {
+      const parsed = parseFloat(String(localValue));
+      if (!isNaN(parsed)) {
+        valueToSave = parsed;
+      }
+    }
+
     if (onSave) {
-      onSave(localValue);
+      onSave(valueToSave);
     } else {
-      updateData(dataKey, localValue);
+      updateData(dataKey, valueToSave);
     }
   };
 

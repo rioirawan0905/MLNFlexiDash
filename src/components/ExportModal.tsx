@@ -83,14 +83,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
 
         const widgetsHtml = `
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-            ${dashboard.widgets.map(w => {
+            ${dashboard.widgets.map((w: any) => {
               let contentHtml = '';
               const widgetData = dashboard.data[w.dataKey];
 
               if (w.type === 'metric') {
-                const val = w.data?.value || widgetData?.value || '0';
-                const unit = w.data?.unit || widgetData?.unit || '';
-                const label = w.data?.label || widgetData?.label || 'Metric';
+                const val = widgetData?.value || '0';
+                const unit = widgetData?.unit || '';
+                const label = widgetData?.label || 'Metric';
                 contentHtml = `
                   <div style="text-align: center; padding: 15px; width: 100%;">
                     <div style="font-size: 42px; font-weight: 900; color: #3b82f6; margin-bottom: 8px;">${val}<span style="font-size: 20px; vertical-align: middle; margin-left: 4px;">${unit}</span></div>
@@ -183,7 +183,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
                     </div>
                   `;
               } else {
-                contentHtml = `<div style="padding: 20px; color: #94a3b8; font-style: italic; font-size: 12px; text-align: center; border: 1px dashed #e2e8f0; border-radius: 8px;">${w.type.toUpperCase()} data summarized in report</div>`;
+                contentHtml = `<div style="padding: 20px; color: #94a3b8; font-style: italic; font-size: 12px; text-align: center; border: 1px dashed #e2e8f0; border-radius: 8px;">${String(w.type).toUpperCase()} data summarized in report</div>`;
               }
 
               return `
