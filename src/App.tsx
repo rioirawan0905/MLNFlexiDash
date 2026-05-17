@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import './lib/i18n';
 import { 
   DndContext, 
-  closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -32,7 +32,11 @@ const DashboardContent: React.FC = () => {
   const [showAddMenu, setShowAddMenu] = React.useState(false);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -66,7 +70,7 @@ const DashboardContent: React.FC = () => {
       <main className="max-w-[1700px] mx-auto p-4 sm:p-6 lg:p-10">
         <DndContext 
           sensors={sensors}
-          collisionDetection={closestCenter}
+          collisionDetection={closestCorners}
           onDragEnd={handleDragEnd}
         >
           <SortableContext 

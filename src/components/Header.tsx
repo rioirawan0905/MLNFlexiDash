@@ -11,6 +11,8 @@ export const Header: React.FC = () => {
     multiState, 
     activeDashboard, 
     isEditMode, 
+    isSaving,
+    hasUnsavedChanges,
     toggleEditMode, 
     saveDashboard, 
     setLanguage,
@@ -115,16 +117,28 @@ export const Header: React.FC = () => {
         {isEditMode ? (
           <div className="flex gap-2">
             <button 
-              onClick={toggleEditMode}
-              className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg hover:bg-slate-100 transition-all flex items-center gap-2 text-slate-600"
+              onClick={() => {
+                if (hasUnsavedChanges && !confirm('Discard unsaved changes?')) return;
+                window.location.reload(); // Simplest way to discard deep state changes for now, or we could fetchState again
+              }}
+              className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all flex items-center gap-2 text-slate-600"
             >
-              <X size={16} /> {t('cancel')}
+              <X size={16} /> {hasUnsavedChanges ? 'Discard' : t('cancel')}
             </button>
             <button 
               onClick={saveDashboard}
-              className="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
+              disabled={isSaving}
+              className="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 relative"
             >
-              <Save size={16} /> {t('save')}
+              {hasUnsavedChanges && !isSaving && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-pulse" />
+              )}
+              {isSaving ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
+              {isSaving ? t('saving', 'Saving...') : t('save')}
             </button>
           </div>
         ) : (

@@ -9,7 +9,9 @@ interface DashboardContextType {
   multiState: MultiDashboardState | null;
   activeDashboard: DashboardState | null;
   isLoading: boolean;
+  isSaving: boolean;
   isEditMode: boolean;
+  hasUnsavedChanges: boolean;
   toggleEditMode: () => void;
   updateData: (key: string, value: any) => void;
   updateWidget: (widgetId: string, config: Partial<WidgetConfig>) => void;
@@ -30,6 +32,19 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [multiState, setMultiState] = useState<MultiDashboardState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     api.getState().then(res => {
@@ -51,6 +66,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const toggleEditMode = () => setIsEditMode(prev => !prev);
 
   const updateActiveDashboard = (updater: (prev: DashboardState) => DashboardState) => {
+    setHasUnsavedChanges(true);
     setMultiState(prev => {
       if (!prev) return null;
       return {
@@ -191,8 +207,14 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const saveDashboard = async () => {
     if (multiState) {
-      await api.saveState(multiState);
-      setIsEditMode(false);
+      setIsSaving(true);
+      try {
+        await api.saveState(multiState);
+        setIsEditMode(false);
+        setHasUnsavedChanges(false);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -201,7 +223,9 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       multiState,
       activeDashboard,
       isLoading,
+      isSaving,
       isEditMode,
+      hasUnsavedChanges,
       toggleEditMode,
       updateData,
       updateWidget,
