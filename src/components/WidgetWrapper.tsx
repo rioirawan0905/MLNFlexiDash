@@ -84,13 +84,13 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
       animate={{ opacity: 1, scale: 1 }}
     >
       <div className="widget-header">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {isEditMode && <GripVertical size={12} className="text-slate-500 cursor-grab active:cursor-grabbing shrink-0" {...attributes} {...listeners} />}
           {isEditMode ? (
             <input 
               value={config.title}
               onChange={(e) => updateWidget(config.id, { title: e.target.value })}
-              className="bg-transparent border-b border-blue-500/30 outline-none widget-title opacity-100 text-slate-900 dark:text-white"
+              className="bg-transparent border-b border-blue-500/30 outline-none widget-title opacity-100 text-slate-900 dark:text-white w-full min-w-[50px]"
             />
           ) : (
             <span className="widget-title truncate text-slate-900 dark:text-white">{config.title}</span>
@@ -98,11 +98,11 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
         </div>
         
         {isEditMode && (
-          <div className="flex gap-1.5 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-1 items-center ml-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
             {config.type === 'chart' && (
               <button 
                 onClick={toggleChartType}
-                className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all text-[10px] font-bold font-mono"
+                className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all text-[9px] font-bold font-mono"
                 title="Switch Chart Type"
               >
                 {config.options?.chartType === 'pie' ? 'BAR' : 'PIE'}
@@ -110,10 +110,10 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             )}
             <button 
               onClick={toggleTextColor}
-              className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
+              className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
               title="Change Text Color"
             >
-              <div className={cn("w-3 h-3 rounded-full border border-black/10 dark:border-white/20", 
+              <div className={cn("w-2.5 h-2.5 rounded-full border border-black/10 dark:border-white/20", 
                 config.options?.textColor?.includes('blue') ? 'bg-blue-500' : 
                 config.options?.textColor?.includes('emerald') ? 'bg-emerald-500' : 
                 config.options?.textColor?.includes('rose') ? 'bg-rose-500' : 
@@ -124,17 +124,17 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             </button>
             <button 
               onClick={toggleSpan}
-              className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
+              className="p-1 text-slate-500 hover:text-blue-400 hover:bg-white/5 rounded transition-all"
               title="Resize Widget"
             >
-              {config.gridSpan === 'col-span-2' ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+              {config.gridSpan === 'col-span-2' ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
             </button>
             <button 
               onClick={() => deleteWidget(config.id)}
-              className="p-1.5 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-all"
+              className="p-1 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-all"
               title="Delete Widget"
             >
-              <Trash2 size={12} />
+              <Trash2 size={11} />
             </button>
           </div>
         )}

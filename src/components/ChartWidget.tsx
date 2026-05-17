@@ -70,13 +70,14 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
         )}
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
-            <YAxis fontSize={10} axisLine={false} tickLine={false} />
+            <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.6} />
+            <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.6} />
             <Tooltip 
-              cursor={{ fill: 'rgba(0,0,0,0.1)' }}
-              contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #333', fontSize: '10px' }}
+              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+              contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px' }}
+              itemStyle={{ color: '#fff' }}
             />
-            <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} label={showLabels ? { position: 'top', fontSize: 10, fill: '#888' } : false} />
+            <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} label={showLabels ? { position: 'top', fontSize: 10, fill: 'currentColor' } : false} />
             <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '10px' }} />
           </BarChart>
         </ResponsiveContainer>
