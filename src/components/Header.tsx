@@ -118,12 +118,6 @@ export const Header: React.FC = () => {
           >
             EN
           </button>
-          <button 
-            onClick={() => setLanguage('id')}
-            className={`px-3 py-1.5 text-[10px] uppercase font-bold border-l border-slate-200 transition-colors ${multiState?.preferences.language === 'id' ? 'bg-blue-600 text-white' : 'hover:bg-slate-200 text-slate-500'}`}
-          >
-            ID
-          </button>
         </div>
 
         {isEditMode ? (

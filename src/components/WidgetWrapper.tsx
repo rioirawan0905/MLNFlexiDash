@@ -62,9 +62,22 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
     updateWidget(config.id, { gridSpan: spans[nextIndex] });
   };
 
+  const changeRowSpan = (delta: number) => {
+    const spans = ['row-span-1', 'row-span-2', 'row-span-3', 'row-span-4'];
+    const current = config.rowSpan || 'row-span-1';
+    let index = spans.indexOf(current);
+    if (index === -1) index = 0;
+    
+    let nextIndex = index + delta;
+    if (nextIndex < 0) nextIndex = 0;
+    if (nextIndex >= spans.length) nextIndex = spans.length - 1;
+    
+    updateWidget(config.id, { rowSpan: spans[nextIndex] });
+  };
+
   const toggleChartType = () => {
     if (config.type !== 'chart') return;
-    const types = ['bar', 'pie', 'radar'];
+    const types = ['bar', 'stacked_bar', 'line', 'pie', 'radar'];
     const current = config.options?.chartType || 'bar';
     const nextIndex = (types.indexOf(current) + 1) % types.length;
     updateWidget(config.id, { options: { ...config.options, chartType: types[nextIndex] } });
@@ -85,6 +98,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
       className={cn(
         "widget-card transition-all group", 
         config.gridSpan,
+        config.rowSpan,
         config.options?.textColor,
         isDragging && "opacity-50 scale-95 shadow-none border-blue-500/50"
       )}
@@ -141,10 +155,31 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ config }) => {
             <button 
               onClick={() => changeSpan(1)}
               className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-20"
-              title="Expand Widget"
+              title="Expand Widget Width"
               disabled={config.gridSpan === 'col-span-full'}
             >
               <Maximize2 size={11} />
+            </button>
+            <div className="h-4 w-[1px] bg-slate-200 mx-0.5" />
+            <button 
+              onClick={() => changeRowSpan(-1)}
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-20 flex flex-col items-center"
+              title="Shrink Widget Height"
+              disabled={config.rowSpan === 'row-span-1'}
+            >
+              <div className="flex flex-col gap-0.5">
+                <Minimize2 size={11} className="rotate-90" />
+              </div>
+            </button>
+            <button 
+              onClick={() => changeRowSpan(1)}
+              className="p-1 text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-20 flex flex-col items-center"
+              title="Expand Widget Height"
+              disabled={config.rowSpan === 'row-span-4'}
+            >
+              <div className="flex flex-col gap-0.5">
+                <Maximize2 size={11} className="rotate-90" />
+              </div>
             </button>
             <button 
               onClick={() => deleteWidget(config.id)}

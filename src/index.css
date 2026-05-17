@@ -50,7 +50,7 @@
 
 @layer components {
   .dashboard-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-6 p-6 md:p-8;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-6 p-6 md:p-8 grid-flow-dense;
   }
 
   .widget-card {
@@ -67,5 +67,20 @@
 
   .data-text {
     @apply font-mono tracking-tighter text-slate-900;
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 1cm;
+  }
+  
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
   }
 }

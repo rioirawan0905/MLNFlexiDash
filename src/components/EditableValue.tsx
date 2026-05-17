@@ -52,7 +52,7 @@ export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, cl
     return (
       <input
         autoFocus
-        value={localValue}
+        value={localValue === null || (typeof localValue === 'number' && isNaN(localValue)) ? '' : localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur()}

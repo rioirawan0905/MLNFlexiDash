@@ -7,9 +7,11 @@ import React from 'react';
 import { DashboardProvider, useDashboard } from './context/DashboardContext';
 import { Header } from './components/Header';
 import { WidgetWrapper } from './components/WidgetWrapper';
-import { Plus } from 'lucide-react';
+import { TemplateLibrary } from './components/TemplateLibrary';
+import { Plus, Layout } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import './lib/i18n';
+import { AnimatePresence } from 'motion/react';
 import { 
   DndContext, 
   closestCorners,
@@ -30,6 +32,7 @@ const DashboardContent: React.FC = () => {
   const { activeDashboard, isLoading, isEditMode, reorderWidgets, addWidget } = useDashboard();
   const { t } = useTranslation();
   const [showAddMenu, setShowAddMenu] = React.useState(false);
+  const [showTemplateLibrary, setShowTemplateLibrary] = React.useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -95,6 +98,15 @@ const DashboardContent: React.FC = () => {
 
                   {showAddMenu && (
                     <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-2xl p-2 grid grid-cols-2 gap-1 z-50 animate-in fade-in zoom-in-95">
+                      <button
+                        onClick={() => {
+                          setShowTemplateLibrary(true);
+                          setShowAddMenu(false);
+                        }}
+                        className="col-span-2 px-3 py-3 text-[10px] font-black uppercase rounded-lg bg-slate-900 text-white hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 mb-1"
+                      >
+                        <Layout size={12} /> Template Library
+                      </button>
                       {(['metric', 'chart', 'table', 'highlights', 'timeline', 'progress'] as const).map(type => (
                         <button
                           key={type}
@@ -114,6 +126,12 @@ const DashboardContent: React.FC = () => {
             </div>
           </SortableContext>
         </DndContext>
+
+        <AnimatePresence>
+          {showTemplateLibrary && (
+            <TemplateLibrary onClose={() => setShowTemplateLibrary(false)} />
+          )}
+        </AnimatePresence>
       </main>
       
       <footer className="mt-20 p-12 border-t border-slate-200 opacity-60">

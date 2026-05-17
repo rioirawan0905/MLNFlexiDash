@@ -73,7 +73,11 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
   };
 
   const showBarLabels = config.options?.showBarLabels !== false;
-  const widgetHeight = config.options?.height || 400;
+  const rawHeight = config.options?.height;
+  const baseHeight = 160; 
+  const rowHeight = 44; 
+  const calculatedHeight = baseHeight + (data.length * rowHeight);
+  const widgetHeight = (typeof rawHeight === 'number' && !isNaN(rawHeight)) ? rawHeight : Math.max(300, calculatedHeight);
 
   // Basic Gantt Logic
   const allDates = data.flatMap((item: TimelineItem) => {
@@ -129,11 +133,11 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
         className="flex-1 overflow-auto transition-all duration-300"
         style={{ height: `${widgetHeight}px`, minHeight: '100px' }}
       >
-        <div className="min-w-[1000px] p-6">
+        <div className="min-w-[800px] p-4">
           {/* Header */}
-          <div className="flex items-end border-b border-slate-200 pb-4 mb-2">
-            <div className="w-[300px] pr-8">
-              <div className="flex justify-between items-center mb-4">
+          <div className="flex items-end border-b border-slate-200 pb-2 mb-1">
+            <div className="w-[200px] pr-4">
+              <div className="flex justify-between items-center mb-2">
                 <span className="font-black text-[10px] uppercase tracking-tighter opacity-40">Project Roadmap</span>
                 {isEditMode && (
                   <div className="flex flex-col gap-2">
@@ -179,15 +183,15 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
               <div className="font-mono text-[10px] uppercase font-bold opacity-70">Task & Milestones</div>
             </div>
             
-            <div className="flex-1 relative h-10 border-l border-slate-200">
+            <div className="flex-1 relative h-8 border-l border-slate-200">
               {intervals.map((date, i) => (
                 <div 
                   key={i} 
-                  className="absolute bottom-0 border-l border-slate-200 h-full"
+                  className="absolute bottom-0 border-l border-slate-100 h-full"
                   style={{ left: `${getPosition(date.toISOString())}%` }}
                 >
-                  <span className="absolute -top-6 left-1 text-[9px] font-black text-slate-500 whitespace-nowrap bg-white px-1">
-                    {scale === 'day' ? format(date, 'MMM d') : scale === 'week' ? `W${format(date, 'w')} '${format(date, 'yy')}` : format(date, 'MMMM yyyy')}
+                  <span className="absolute -top-5 left-1 text-[8px] font-black text-slate-400 whitespace-nowrap bg-white px-1">
+                    {scale === 'day' ? format(date, 'MMM d') : scale === 'week' ? `W${format(date, 'w')}` : format(date, 'MMM yy')}
                   </span>
                 </div>
               ))}
@@ -202,63 +206,55 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
               const width = Math.max(0.5, endPos - startPos);
 
               return (
-                <div key={item.id} className="group flex items-center py-4 bg-white hover:bg-slate-50/50 transition-colors">
+                <div key={item.id} className="group flex items-center py-2 bg-white hover:bg-slate-50/50 transition-colors">
                   {/* Task Info */}
-                  <div className="w-[300px] pr-8 space-y-1.5">
-                    <div className="flex items-center gap-2">
+                  <div className="w-[200px] pr-4 space-y-0.5">
+                    <div className="flex items-center gap-1.5">
                        {isEditMode && (
-                        <div className="flex gap-1">
+                        <div className="flex gap-0.5">
                           <button 
                             onClick={() => toggleMilestone(item.id)}
-                            className={`p-1.5 rounded transition-all ${item.isMilestone ? 'text-yellow-600 bg-yellow-50 shadow-sm' : 'text-slate-300 hover:text-slate-500 hover:bg-slate-100'}`}
+                            className={`p-1 rounded transition-all ${item.isMilestone ? 'text-yellow-600 bg-yellow-50 shadow-sm' : 'text-slate-300 hover:text-slate-500 hover:bg-slate-100'}`}
                             title="Toggle Milestone"
                           >
-                            <Flag size={11} />
+                            <Flag size={10} />
                           </button>
                           <button 
                             onClick={() => addMilestoneToTask(item.id)}
-                            className="p-1.5 rounded text-slate-300 hover:text-blue-500 hover:bg-blue-50 transition-all"
+                            className="p-1 rounded text-slate-300 hover:text-blue-500 hover:bg-blue-50 transition-all"
                             title="Add Point on Bar"
                           >
-                            <Plus size={11} />
+                            <Plus size={10} />
                           </button>
                         </div>
                       )}
                       <EditableValue 
                         value={item.task} 
                         dataKey={`${config.dataKey}[${idx}].task`}
-                        className="text-xs font-black text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis tracking-tighter"
+                        className="text-[10px] font-black text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis tracking-tighter"
                       />
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] font-mono text-slate-400">
+                    <div className="flex items-center gap-2 text-[8px] font-mono text-slate-400">
                       <div className="flex items-center gap-1">
-                        <Calendar size={10} className="opacity-50" />
                         <EditableValue value={item.start} dataKey={`${config.dataKey}[${idx}].start`} />
                         {!item.isMilestone && (
                           <>
-                            <span className="opacity-30 mx-1">-</span>
+                            <span className="opacity-30">-</span>
                             <EditableValue value={item.end} dataKey={`${config.dataKey}[${idx}].end`} />
                           </>
                         )}
                       </div>
-                      
-                      {item.milestones && item.milestones.length > 0 && (
-                        <div className="flex items-center gap-2 border-l border-slate-200 pl-2">
-                           <Flag size={10} className="text-yellow-500 fill-yellow-500" />
-                           <span className="font-bold text-slate-500">{item.milestones.length} points</span>
-                        </div>
-                      )}
                     </div>
                   </div>
 
                   {/* Bar Area */}
                   <div className="flex-1 relative">
-                    <div className="relative h-10 flex items-center group/bar">
+                    <div className="relative h-8 flex items-center group/bar">
                       {/* Vertical Grid lines */}
                       {intervals.map((date, i) => (
                         <div 
                           key={i} 
-                          className="absolute inset-y-0 border-l-2 border-slate-200/40 pointer-events-none -mt-4 -mb-4"
+                          className="absolute inset-y-0 border-l border-slate-100 pointer-events-none -mt-2 -mb-2"
                           style={{ left: `${getPosition(date.toISOString())}%` }}
                         />
                       ))}
@@ -266,14 +262,14 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                       {/* The Bar */}
                       {!item.isMilestone && (
                         <div 
-                          className="absolute h-4 rounded-full transition-all duration-700 z-10 bg-gradient-to-r from-blue-500 to-indigo-600 shadow-[0_4px_12px_rgba(59,130,246,0.2)] flex items-center"
+                          className="absolute h-3 rounded-full transition-all duration-700 z-10 bg-gradient-to-r from-blue-500 to-indigo-600 shadow-[0_2px_8px_rgba(59,130,246,0.2)] flex items-center"
                           style={{ 
                             left: `${startPos}%`, 
                             width: `${width}%`
                           }}
                         >
                           {showBarLabels && (
-                            <span className="absolute left-full ml-3 text-[9px] font-black text-slate-500 whitespace-nowrap opacity-60">
+                            <span className="absolute left-full ml-2 text-[8px] font-black text-slate-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
                               {item.task}
                             </span>
                           )}
@@ -285,31 +281,31 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                             return (
                               <div 
                                 key={m.id}
-                                className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-yellow-500 shadow-sm z-20 group/point"
+                                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full border-2 border-yellow-500 shadow-sm z-20 group/point"
                                 style={{ left: `${relativePos}%` }}
                               >
                                 {showBarLabels && (
-                                  <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-[7px] font-bold text-yellow-600 whitespace-nowrap bg-white/80 px-1 rounded">
+                                  <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-[6px] font-bold text-yellow-600 whitespace-nowrap bg-white/60 px-0.5 rounded">
                                     {m.name}
                                   </span>
                                 )}
                                 <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 opacity-0 group-hover/point:opacity-100 transition-opacity pointer-events-none">
-                                  <div className="bg-slate-900 text-white text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap shadow-xl flex flex-col items-center">
+                                  <div className="bg-slate-900 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap shadow-xl flex flex-col items-center">
                                     <span className="font-bold">{m.name}</span>
                                     <span className="opacity-60">{format(new Date(m.date), 'MMM d')}</span>
                                   </div>
                                 </div>
                                 {isEditMode && (
-                                  <div className="absolute top-full mt-4 p-2 bg-white border border-slate-200 rounded-lg shadow-xl z-30 opacity-0 group-hover/point:opacity-100 pointer-events-auto">
-                                    <EditableValue value={m.name} dataKey={`${config.dataKey}[${idx}].milestones[${mIdx}].name`} className="font-bold text-[8px] mb-1" />
-                                    <EditableValue value={m.date} dataKey={`${config.dataKey}[${idx}].milestones[${mIdx}].date`} className="text-[7px] block" />
+                                  <div className="absolute top-full mt-2 p-1.5 bg-white border border-slate-200 rounded shadow-xl z-30 opacity-0 group-hover/point:opacity-100 pointer-events-auto">
+                                    <EditableValue value={m.name} dataKey={`${config.dataKey}[${idx}].milestones[${mIdx}].name`} className="font-bold text-[7px] mb-0.5" />
+                                    <EditableValue value={m.date} dataKey={`${config.dataKey}[${idx}].milestones[${mIdx}].date`} className="text-[6px] block" />
                                     <button 
                                       onClick={() => {
                                         const newItems = [...data];
                                         newItems[idx].milestones = item.milestones?.filter((_, i) => i !== mIdx);
                                         updateData(config.dataKey, newItems);
                                       }}
-                                      className="text-red-500 text-[7px] mt-1 hover:underline"
+                                      className="text-red-500 text-[6px] mt-0.5 hover:underline"
                                     >
                                       Remove
                                     </button>
@@ -320,7 +316,7 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                           })}
 
                           {/* Tooltip */}
-                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-[9px] opacity-0 group-hover/bar:opacity-100 whitespace-nowrap z-30 transition-all pointer-events-none text-white shadow-2xl">
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 px-2 py-1 rounded text-[8px] opacity-0 group-hover/bar:opacity-100 whitespace-nowrap z-30 transition-all pointer-events-none text-white shadow-2xl">
                              <div className="font-black truncate max-w-[150px]">{item.task}</div>
                              <div className="opacity-60 font-mono italic">{format(new Date(item.start), 'MMM d')} — {format(new Date(item.end), 'MMM d')}</div>
                           </div>
@@ -333,20 +329,20 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
                           className="absolute z-20"
                           style={{ left: `${startPos}%` }}
                         >
-                          <div className="w-5 h-5 bg-yellow-500 rotate-45 border-2 border-white shadow-lg -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transform hover:scale-125 transition-transform duration-300">
-                             <div className="-rotate-45 text-[8px] text-white">
-                                <Flag size={8} fill="white" />
+                          <div className="w-3.5 h-3.5 bg-yellow-500 rotate-45 border border-white shadow-lg -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transform hover:scale-125 transition-transform duration-300">
+                             <div className="-rotate-45 text-[6px] text-white">
+                                <Flag size={6} fill="white" />
                              </div>
                           </div>
                           {showBarLabels && (
-                            <div className="absolute left-4 top-0 -translate-y-1/2 flex flex-col pointer-events-none">
-                              <span className="text-[9px] font-black text-slate-700 whitespace-nowrap">{item.task}</span>
-                              <span className="text-[7px] font-mono text-slate-400 whitespace-nowrap uppercase">{format(new Date(item.start), 'MMM d, yyyy')}</span>
+                            <div className="absolute left-3 top-0 -translate-y-1/2 flex flex-col pointer-events-none">
+                              <span className="text-[8px] font-black text-slate-600 whitespace-nowrap">{item.task}</span>
+                              <span className="text-[6px] font-mono text-slate-400 whitespace-nowrap">{format(new Date(item.start), 'MMM d')}</span>
                             </div>
                           )}
                            {/* Tooltip */}
-                           <div className="absolute -top-10 left-0 -translate-x-1/2 bg-yellow-600 px-3 py-1.5 rounded-lg text-[9px] opacity-0 group-hover/bar:opacity-100 whitespace-nowrap z-30 transition-all pointer-events-none text-white shadow-2xl font-black">
-                             {item.task}: {format(new Date(item.start), 'MMM d, yyyy')}
+                           <div className="absolute -top-8 left-0 -translate-x-1/2 bg-yellow-600 px-2 py-1 rounded text-[8px] opacity-0 group-hover/bar:opacity-100 whitespace-nowrap z-30 transition-all pointer-events-none text-white shadow-2xl font-black">
+                             {item.task}: {format(new Date(item.start), 'MMM d')}
                           </div>
                         </div>
                       )}
@@ -369,12 +365,12 @@ export const TimelineWidget: React.FC<TimelineWidgetProps> = ({ config }) => {
       </div>
 
       {isEditMode && (
-        <div className="p-6 border-t border-slate-100 bg-slate-50/50">
+        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
           <button 
             onClick={addItem}
-            className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+            className="w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <Plus size={16} /> Create New Roadmap Entry
+            <Plus size={14} /> Add Task
           </button>
         </div>
       )}

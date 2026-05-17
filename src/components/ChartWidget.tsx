@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, Radar, Label, Sector } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, Radar, Label, Sector, LineChart, Line } from 'recharts';
 import { WidgetConfig } from '../types';
 import { useDashboard } from '../context/DashboardContext';
 import { EditableValue } from './EditableValue';
@@ -68,11 +68,125 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
     const COLORS = ['#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899'];
     const isVerticalLegend = legendAlign === 'left' || legendAlign === 'right';
 
-    // Ensure all data point values are numbers for proper chart rendering
-    const chartData = data.map((item: any) => ({
-      ...item,
-      value: Number(item.value) || 0
-    }));
+    // Aggregate data by name to handle duplicate entries
+    const chartData = (data as any[]).reduce((acc: any[], item: any) => {
+      const name = String(item.name || 'Unnamed');
+      const value = Number(item.value) || 0;
+      const existing = acc.find(d => d.name === name);
+      
+      if (existing) {
+        existing.value += value;
+      } else {
+        acc.push({ ...item, name, value });
+      }
+      return acc;
+    }, []);
+
+    if (chartType === 'line') {
+      return (
+        <div className="h-[200px] w-full p-2 relative">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+              <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} />
+              <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid rgba(0,0,0,0.1)', 
+                  borderRadius: '12px', 
+                  fontSize: '10px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  backdropFilter: 'blur(10px)'
+                }}
+                itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="value" 
+                stroke={chartData[0]?.color || '#3b82f6'} 
+                strokeWidth={3} 
+                dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }} 
+                activeDot={{ r: 6, strokeWidth: 0 }} 
+                label={showLabels ? { position: 'top', fontSize: 10, fill: 'currentColor' } : false}
+              />
+              {showLegend && (
+                <Legend 
+                  align={legendAlign}
+                  verticalAlign={isVerticalLegend ? 'middle' : legendVerticalAlign}
+                  layout={isVerticalLegend ? 'vertical' : 'horizontal'}
+                  wrapperStyle={{ 
+                    fontSize: '9px', 
+                    paddingTop: isVerticalLegend ? '0' : '10px',
+                    width: isVerticalLegend ? '30%' : 'auto'
+                  }} 
+                  formatter={(value) => <span className="text-slate-500 font-medium truncate max-w-[80px] inline-block align-middle">{value}</span>}
+                />
+              )}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      );
+    }
+
+    if (chartType === 'stacked_bar') {
+      // For stacked bar, we group by name but keep segments for stacking
+      const names = Array.from(new Set(data.map((item: any) => String(item.name || 'Unnamed'))));
+      const stackedData = names.map(name => {
+        const result: any = { name };
+        (data as any[]).forEach((item: any, idx: number) => {
+          if (String(item.name || 'Unnamed') === name) {
+            result[`val_${idx}`] = Number(item.value) || 0;
+            result[`color_${idx}`] = item.color;
+          }
+        });
+        return result;
+      });
+
+      return (
+        <div className="h-[200px] w-full p-2 relative">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={stackedData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+              <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} />
+              <YAxis fontSize={10} axisLine={false} tickLine={false} stroke="currentColor" opacity={0.8} />
+              <Tooltip 
+                cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid rgba(0,0,0,0.1)', 
+                  borderRadius: '12px', 
+                  fontSize: '10px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  backdropFilter: 'blur(10px)'
+                }}
+                itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
+              />
+              {data.map((item: any, idx: number) => (
+                <Bar 
+                  key={idx} 
+                  dataKey={`val_${idx}`} 
+                  stackId="a" 
+                  fill={item.color || COLORS[idx % COLORS.length]} 
+                  radius={idx === data.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                />
+              ))}
+              {showLegend && (
+                <Legend 
+                  align={legendAlign}
+                  verticalAlign={isVerticalLegend ? 'middle' : legendVerticalAlign}
+                  layout={isVerticalLegend ? 'vertical' : 'horizontal'}
+                  wrapperStyle={{ 
+                    fontSize: '9px', 
+                    paddingTop: isVerticalLegend ? '0' : '10px',
+                    width: isVerticalLegend ? '30%' : 'auto'
+                  }} 
+                  formatter={(value) => <span className="text-slate-500 font-medium truncate max-w-[80px] inline-block align-middle">{value}</span>}
+                />
+              )}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      );
+    }
 
     if (chartType === 'radar') {
       return (
@@ -242,7 +356,14 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
               }}
               itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
             />
-            <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} label={showLabels ? { position: 'top', fontSize: 10, fill: 'currentColor' } : false} />
+            <Bar dataKey="value" radius={[4, 4, 0, 0]} label={showLabels ? { position: 'top', fontSize: 10, fill: 'currentColor' } : false}>
+              {chartData.map((entry: any, index: number) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color || COLORS[index % COLORS.length]} 
+                />
+              ))}
+            </Bar>
             {showLegend && (
               <Legend 
                 align={legendAlign}

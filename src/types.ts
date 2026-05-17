@@ -5,6 +5,7 @@ export interface WidgetConfig {
   type: WidgetType;
   title: string;
   gridSpan?: string; // e.g. "col-span-1"
+  rowSpan?: string;  // e.g. "row-span-1"
   dataKey: string; 
   options?: any;
 }

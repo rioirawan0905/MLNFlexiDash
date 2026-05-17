@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import i18n from '../lib/i18n';
 import { arrayMove } from '@dnd-kit/sortable';
 import { addDays } from 'date-fns';
+import { WIDGET_TEMPLATES } from '../constants/templates';
 
 interface DashboardContextType {
   multiState: MultiDashboardState | null;
@@ -24,6 +25,7 @@ interface DashboardContextType {
   deleteDashboard: (id: string) => void;
   updateDashboardName: (name: string) => void;
   addWidget: (type: WidgetType) => void;
+  addFromTemplate: (templateId: string) => void;
   revertState: () => Promise<void>;
 }
 
@@ -213,6 +215,31 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     });
   };
 
+  const addFromTemplate = (templateId: string) => {
+    const template = WIDGET_TEMPLATES.find(t => t.id === templateId);
+    if (!template) return;
+
+    updateActiveDashboard(d => {
+      const newId = `w-${Date.now()}`;
+      const dataKey = `${template.config.type}_${Date.now()}`;
+      
+      const newData = { ...d.data };
+      newData[dataKey] = template.defaultData;
+
+      const newWidget: WidgetConfig = {
+        ...template.config,
+        id: newId,
+        dataKey
+      };
+
+      return {
+        ...d,
+        widgets: [...d.widgets, newWidget],
+        data: newData
+      };
+    });
+  };
+
   const saveDashboard = async () => {
     if (multiState) {
       setIsSaving(true);
@@ -265,6 +292,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       deleteDashboard,
       updateDashboardName,
       addWidget,
+      addFromTemplate,
       revertState
     }}>
       {children}

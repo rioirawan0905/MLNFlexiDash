@@ -44,14 +44,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
     container.style.top = '0';
     container.style.left = '0';
     container.style.zIndex = '-1000';
-    container.style.width = '1200px';
+    container.style.width = '1600px';
     container.style.pointerEvents = 'none';
     container.style.opacity = '0';
     container.style.backgroundColor = '#f8fafc';
     document.body.appendChild(container);
 
     try {
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF('l', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -64,7 +64,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
 
         const pageDiv = document.createElement('div');
         pageDiv.style.padding = '60px';
-        pageDiv.style.width = '1200px';
+        pageDiv.style.width = '1600px';
         pageDiv.style.backgroundColor = '#f8fafc';
         pageDiv.style.fontFamily = 'Inter, sans-serif';
         
@@ -82,7 +82,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
         `;
 
         const widgetsHtml = `
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
             ${dashboard.widgets.map((w: any) => {
               let contentHtml = '';
               const widgetData = dashboard.data[w.dataKey];
@@ -93,8 +93,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
                 const label = widgetData?.label || 'Metric';
                 contentHtml = `
                   <div style="text-align: center; padding: 15px; width: 100%;">
-                    <div style="font-size: 42px; font-weight: 900; color: #3b82f6; margin-bottom: 8px;">${val}<span style="font-size: 20px; vertical-align: middle; margin-left: 4px;">${unit}</span></div>
-                    <div style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">${label}</div>
+                    <div style="font-size: 32px; font-weight: 900; color: #3b82f6; margin-bottom: 8px;">${val}<span style="font-size: 16px; vertical-align: middle; margin-left: 4px;">${unit}</span></div>
+                    <div style="font-size: 9px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">${label}</div>
                   </div>
                 `;
               } else if (w.type === 'progress') {
@@ -104,13 +104,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
                 else if (pct <= 66) color = '#f59e0b';
 
                 contentHtml = `
-                  <div style="padding: 15px; width: 100%;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <span style="font-size: 11px; font-weight: 800; color: #1e293b; text-transform: uppercase;">${widgetData?.label || 'Progress'}</span>
-                        <span style="font-size: 11px; font-weight: 900; color: ${color};">${pct}%</span>
+                  <div style="padding: 10px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 9px; font-weight: 800; color: #1e293b; text-transform: uppercase;">${widgetData?.label || 'Progress'}</span>
+                        <span style="font-size: 9px; font-weight: 900; color: ${color};">${pct}%</span>
                     </div>
-                    <div style="height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-                      <div style="height: 100%; width: ${pct}%; background: ${color}; box-shadow: 0 0 10px ${color}44;"></div>
+                    <div style="height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                      <div style="height: 100%; width: ${pct}%; background: ${color};"></div>
                     </div>
                   </div>
                 `;
@@ -118,12 +118,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
                 const chartData = widgetData || [];
                 const chartType = (w.options?.chartType || 'bar').toUpperCase();
                 contentHtml = `
-                  <div style="padding: 15px; width: 100%;">
-                    <div style="font-size: 10px; color: #64748b; margin-bottom: 15px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">${chartType} Analysis</div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        ${(Array.isArray(chartData) ? chartData.slice(0, 5) : []).map((item: any) => `
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; border-bottom: 1px solid #f1f5f9; padding: 4px 0;">
-                                <span style="font-weight: 700; color: #475569;">${item.name}</span>
+                  <div style="padding: 10px; width: 100%;">
+                    <div style="font-size: 9px; color: #64748b; margin-bottom: 10px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">${chartType} Analysis</div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        ${(Array.isArray(chartData) ? chartData.slice(0, 4) : []).map((item: any) => `
+                            <div style="display: flex; justify-content: space-between; font-size: 9px; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                                <span style="font-weight: 700; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%;">${item.name}</span>
                                 <span style="font-family: monospace; font-weight: 900; color: #3b82f6;">${item.value}</span>
                             </div>
                         `).join('')}
@@ -131,21 +131,21 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
                   </div>
                 `;
               } else if (w.type === 'table') {
-                  const tableData = widgetData || [];
-                  const options = w.options || {};
-                  const columns = options.columns || (Array.isArray(tableData) && tableData.length > 0 ? Object.keys(tableData[0]) : []);
+                  const tableData = widgetData || { rows: [], columns: [] };
+                  const rows = Array.isArray(tableData.rows) ? tableData.rows : [];
+                  const columns = Array.isArray(tableData.columns) ? tableData.columns : [];
                   contentHtml = `
-                    <div style="width: 100%; overflow: hidden; padding: 10px;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
+                    <div style="width: 100%; overflow: hidden; padding: 5px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
                             <thead>
                                 <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                                    ${(Array.isArray(columns) ? columns : []).map((c: string) => `<th style="text-align: left; padding: 8px 6px; text-transform: uppercase; font-weight: 800; color: #475569;">${c}</th>`).join('')}
+                                    ${columns.slice(0, 3).map((c: string) => `<th style="text-align: left; padding: 4px; text-transform: uppercase; font-weight: 800; color: #475569;">${c}</th>`).join('')}
                                 </tr>
                             </thead>
                             <tbody>
-                                ${(Array.isArray(tableData) ? tableData.slice(0, 4) : []).map((row: any) => `
+                                ${rows.slice(0, 3).map((row: any) => `
                                     <tr>
-                                        ${(Array.isArray(columns) ? columns : []).map((c: string) => `<td style="padding: 8px 6px; border-bottom: 1px solid #f1f5f9; color: #1e293b;">${row[c]}</td>`).join('')}
+                                        ${columns.slice(0, 3).map((c: string) => `<td style="padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${row[c]}</td>`).join('')}
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -155,12 +155,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
               } else if (w.type === 'highlights') {
                   const highlights = Array.isArray(widgetData) ? widgetData : [];
                   contentHtml = `
-                    <div style="width: 100%; padding: 10px;">
+                    <div style="width: 100%; padding: 5px;">
                         ${highlights.slice(0, 2).map((h: any) => `
-                            <div style="margin-bottom: 12px;">
-                                <div style="font-size: 9px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-bottom: 4px;">${h.category}</div>
-                                <div style="font-size: 9px; color: #475569; padding-left: 8px; border-left: 2px solid #e2e8f0;">
-                                    ${h.items.slice(0, 2).map((item: string) => `<div style="margin-bottom: 2px;">• ${item}</div>`).join('')}
+                            <div style="margin-bottom: 8px;">
+                                <div style="font-size: 8px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-bottom: 2px;">${h.category}</div>
+                                <div style="font-size: 8px; color: #475569; padding-left: 6px; border-left: 2px solid #e2e8f0;">
+                                    ${h.items.slice(0, 2).map((item: string) => `<div style="margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">• ${item}</div>`).join('')}
                                 </div>
                             </div>
                         `).join('')}
@@ -169,26 +169,25 @@ export const ExportModal: React.FC<ExportModalProps> = ({ onClose }) => {
               } else if (w.type === 'timeline') {
                   const timeline = Array.isArray(widgetData) ? widgetData : [];
                   contentHtml = `
-                    <div style="width: 100%; padding: 10px;">
-                        <div style="font-size: 9px; color: #64748b; margin-bottom: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Project Schedule</div>
-                        ${timeline.slice(0, 4).map((t: any) => `
-                            <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center;">
-                                <div style="width: 6px; h: 6px; border-radius: 50%; background: ${t.isMilestone ? '#f59e0b' : '#3b82f6'}; flex-shrink: 0;"></div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 9px; font-weight: 800; color: #1e293b;">${t.task}</div>
-                                    <div style="font-size: 8px; color: #94a3b8; font-family: monospace;">${t.start} - ${t.end}</div>
+                    <div style="width: 100%; padding: 5px;">
+                        ${timeline.slice(0, 3).map((t: any) => `
+                            <div style="display: flex; gap: 6px; margin-bottom: 4px; align-items: center;">
+                                <div style="width: 4px; h: 4px; border-radius: 50%; background: ${t.isMilestone ? '#f59e0b' : '#3b82f6'}; flex-shrink: 0;"></div>
+                                <div style="flex: 1; overflow: hidden;">
+                                    <div style="font-size: 8px; font-weight: 800; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.task}</div>
+                                    <div style="font-size: 7px; color: #94a3b8; font-family: monospace;">${t.start} - ${t.end}</div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                   `;
               } else {
-                contentHtml = `<div style="padding: 20px; color: #94a3b8; font-style: italic; font-size: 12px; text-align: center; border: 1px dashed #e2e8f0; border-radius: 8px;">${String(w.type).toUpperCase()} data summarized in report</div>`;
+                contentHtml = `<div style="padding: 10px; color: #94a3b8; font-style: italic; font-size: 10px; text-align: center;">${String(w.type).toUpperCase()} SUMMARY</div>`;
               }
 
               return `
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; break-inside: avoid; height: 220px; ${w.gridSpan === 'col-span-full' || w.gridSpan === 'col-span-4' ? 'grid-column: span 2;' : ''}">
-                  <h3 style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1e293b; margin-bottom: 15px; border-left: 3px solid #3b82f6; padding-left: 10px; display: inline-block; letter-spacing: 1px;">${w.title}</h3>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; break-inside: avoid; height: 180px; ${w.gridSpan === 'col-span-full' || w.gridSpan === 'col-span-4' ? 'grid-column: span 2;' : ''}">
+                  <h3 style="font-size: 9px; font-weight: 900; text-transform: uppercase; color: #1e293b; margin-bottom: 10px; border-left: 2px solid #3b82f6; padding-left: 8px; display: inline-block; letter-spacing: 0.5px;">${w.title}</h3>
                   <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden;">${contentHtml}</div>
                 </div>
               `;

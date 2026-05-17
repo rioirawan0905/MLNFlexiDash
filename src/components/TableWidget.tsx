@@ -79,17 +79,32 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
     updateData(config.dataKey, { ...data, columns: newColumns });
   };
 
+  const STATUS_OPTIONS = [
+    { label: 'Done', icon: '✅' },
+    { label: 'In Progress', icon: '🔵' },
+    { label: 'Pending', icon: '⚪' },
+    { label: 'Delayed', icon: '❌' },
+    { label: 'Blocked', icon: '❌' },
+    { label: 'Warning', icon: '⚠️' },
+    { label: 'Planned', icon: '⚪' },
+    { label: 'Success', icon: '✅' }
+  ];
+
   const getStatusIcon = (value: string) => {
     const val = value.toLowerCase();
-    if (val.includes('done') || val.includes('completed') || val.includes('success')) return '✅';
-    if (val.includes('progress') || val.includes('going')) return '🔵';
-    if (val.includes('todo') || val.includes('planned')) return '⚪';
-    if (val.includes('blocked') || val.includes('error')) return '❌';
-    if (val.includes('warning') || val.includes('risk')) return '⚠️';
+    const match = STATUS_OPTIONS.find(opt => val === opt.label.toLowerCase() || val.includes(opt.label.toLowerCase()));
+    if (match) return match.icon;
+    
+    // Fallback logic for variations
+    if (val.includes('completed')) return '✅';
+    if (val.includes('going')) return '🔵';
+    if (val.includes('todo')) return '⚪';
+    if (val.includes('error')) return '❌';
+    if (val.includes('risk')) return '⚠️';
     return null;
   };
 
-  const showStatusIcons = config.options?.showStatusIcons !== false;
+  const showStatusIconsGlobal = config.options?.showStatusIcons !== false;
 
   return (
     <div className="overflow-x-auto p-2">
@@ -99,12 +114,12 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
             <div className="flex items-center gap-2">
               <input 
                 type="checkbox" 
-                id={`status-icons-${config.id}`}
-                checked={showStatusIcons}
+                id={`status-icons-global-${config.id}`}
+                checked={showStatusIconsGlobal}
                 onChange={(e) => updateWidget(config.id, { options: { ...config.options, showStatusIcons: e.target.checked } })}
                 className="accent-blue-500"
               />
-              <label htmlFor={`status-icons-${config.id}`} className="text-[10px] font-bold uppercase opacity-40">Status Icons</label>
+              <label htmlFor={`status-icons-global-${config.id}`} className="text-[10px] font-bold uppercase opacity-40 italic">Auto Status Icons</label>
             </div>
           </div>
         )}
@@ -149,20 +164,57 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
                     )}
                   </div>
                   {isEditMode && (
-                    <div className="flex items-center gap-1 opacity-0 group-hover/th:opacity-100">
-                      <span className="text-[8px] opacity-30">Width:</span>
-                      <input 
-                        type="text" 
-                        value={config.options?.columnWidths?.[col] || 'auto'} 
-                        onChange={(e) => updateWidget(config.id, { 
-                          options: { 
-                            ...config.options, 
-                            columnWidths: { ...config.options?.columnWidths, [col]: e.target.value } 
-                          } 
-                        })}
-                        placeholder="e.g. 150px"
-                        className="bg-transparent border-none outline-none text-[8px] w-full text-blue-500"
-                      />
+                    <div className="flex flex-col gap-1 mt-1 border-t border-slate-200 pt-1">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[8px] opacity-50 font-black uppercase">Width</span>
+                          <span className="text-[8px] font-mono text-blue-600 font-bold">{config.options?.columnWidths?.[col] || 'auto'}</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="50" 
+                          max="600" 
+                          step="10"
+                          value={(() => {
+                            const val = parseInt(String(config.options?.columnWidths?.[col] || '150'));
+                            return isNaN(val) ? 150 : val;
+                          })()} 
+                          onChange={(e) => updateWidget(config.id, { 
+                            options: { 
+                              ...config.options, 
+                              columnWidths: { ...config.options?.columnWidths, [col]: `${e.target.value}px` } 
+                            } 
+                          })}
+                          className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                        <button 
+                          onClick={() => {
+                            const newWidths = { ...config.options?.columnWidths };
+                            delete newWidths[col];
+                            updateWidget(config.id, { options: { ...config.options, columnWidths: newWidths } });
+                          }}
+                          className="text-[7px] text-slate-400 hover:text-blue-500 font-bold text-left uppercase"
+                        >
+                          Reset to Auto
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-[8px] opacity-50 font-black">TYPE:</span>
+                        <select 
+                          value={config.options?.columnTypes?.[col] || 'text'}
+                          onChange={(e) => updateWidget(config.id, {
+                            options: {
+                              ...config.options,
+                              columnTypes: { ...config.options?.columnTypes, [col]: e.target.value }
+                            }
+                          })}
+                          className="bg-white border border-slate-200 text-[8px] px-1 rounded w-full text-slate-600 font-bold cursor-pointer focus:border-blue-500 outline-none"
+                        >
+                          <option value="text">Free Text</option>
+                          <option value="date">Date picker</option>
+                          <option value="status">Status & Icon</option>
+                        </select>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -186,19 +238,59 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
             <tr key={i} className="group border-b border-slate-100 hover:bg-slate-50 transition-colors">
               {data.columns.map((col: string) => {
                 const value = String(row[col] || '');
+                const colType = config.options?.columnTypes?.[col] || 'text';
                 const icon = getStatusIcon(value);
                 
                 return (
-                  <td key={col} className="px-4 py-3 align-top">
-                    <div className="flex items-start gap-2">
-                      {showStatusIcons && icon && (
-                        <span className="text-[14px] mt-[-2px]">{icon}</span>
+                  <td key={col} className="px-4 py-3 align-top group/td overflow-hidden" style={{ width: config.options?.columnWidths?.[col] || 'auto' }}>
+                    <div className="flex items-start gap-2 h-full">
+                      {(colType === 'status' || (showStatusIconsGlobal && colType === 'text')) && icon && (
+                        <span className="text-[14px] mt-[-2px] shrink-0">{icon}</span>
                       )}
-                      <EditableValue 
-                        value={row[col]} 
-                        dataKey={`${config.dataKey}.rows[${i}].${col}`} 
-                        className="text-slate-900 break-words line-clamp-3 hover:line-clamp-none transition-all duration-300"
-                      />
+                      
+                      <div className="flex-1 min-w-0">
+                        {colType === 'date' ? (
+                          <div className="flex items-center gap-1.5 h-full">
+                             {isEditMode ? (
+                               <input 
+                                 type="date"
+                                 value={row[col] ?? ''}
+                                 onChange={(e) => updateData(`${config.dataKey}.rows[${i}].${col}`, e.target.value)}
+                                 className="bg-white border border-slate-200 text-[10px] px-1 rounded outline-none focus:border-blue-500 w-full"
+                               />
+                             ) : (
+                               <span className="font-mono text-[10px] uppercase tracking-tighter opacity-60">
+                                 {row[col]}
+                               </span>
+                             )}
+                          </div>
+                        ) : colType === 'status' ? (
+                          <div className="h-full">
+                             {isEditMode ? (
+                               <select 
+                                 value={row[col] ?? ''}
+                                 onChange={(e) => updateData(`${config.dataKey}.rows[${i}].${col}`, e.target.value)}
+                                 className="bg-white border border-slate-200 text-[9px] px-1 rounded outline-none focus:border-blue-500 w-full font-black uppercase tracking-wider"
+                               >
+                                 <option value="">Select Status...</option>
+                                 {STATUS_OPTIONS.map(opt => (
+                                   <option key={opt.label} value={opt.label}>{opt.icon} {opt.label}</option>
+                                 ))}
+                               </select>
+                             ) : (
+                               <span className="font-black uppercase tracking-widest text-[9px] text-slate-900">
+                                 {row[col]}
+                               </span>
+                             )}
+                          </div>
+                        ) : (
+                          <EditableValue 
+                            value={row[col]} 
+                            dataKey={`${config.dataKey}.rows[${i}].${col}`} 
+                            className="text-slate-900 break-words whitespace-pre-wrap leading-relaxed"
+                          />
+                        )}
+                      </div>
                     </div>
                   </td>
                 );
