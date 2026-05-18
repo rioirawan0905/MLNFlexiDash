@@ -10,9 +10,10 @@ interface EditableValueProps {
   prefix?: string;
   suffix?: string;
   onSave?: (newValue: string | number) => void;
+  multiline?: boolean;
 }
 
-export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, className, prefix, suffix, onSave }) => {
+export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, className, prefix, suffix, onSave, multiline }) => {
   const { isEditMode, updateData } = useDashboard();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -49,27 +50,42 @@ export const EditableValue: React.FC<EditableValueProps> = ({ value, dataKey, cl
   };
 
   if (isEditMode && isEditing) {
+    const commonClasses = cn("bg-slate-100 border-b border-blue-500 outline-none w-full px-1 rounded-t text-slate-900", className);
+    const val = localValue === null || (typeof localValue === 'number' && isNaN(localValue)) ? '' : localValue;
+
+    if (multiline) {
+      return (
+        <textarea
+          autoFocus
+          value={val}
+          onChange={(e) => setLocalValue(e.target.value)}
+          onBlur={handleBlur}
+          className={cn(commonClasses, "min-h-[60px] resize-y")}
+        />
+      );
+    }
+
     return (
       <input
         autoFocus
-        value={localValue === null || (typeof localValue === 'number' && isNaN(localValue)) ? '' : localValue}
+        value={val}
         onChange={(e) => setLocalValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur()}
-        className={cn("bg-slate-100 border-b border-blue-500 outline-none w-full px-1 rounded-t text-slate-900", className)}
+        className={commonClasses}
       />
     );
   }
 
   return (
     <div 
-      className={cn("group flex items-center gap-2 cursor-pointer text-slate-900", className)}
+      className={cn("group flex items-start gap-2 cursor-pointer text-slate-900", className)}
       onClick={() => isEditMode && setIsEditing(true)}
     >
-      <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+      <span className={cn("flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap", className)}>
         {prefix}{value}{suffix}
       </span>
-      <div className="flex shrink-0 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex shrink-0 gap-1 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5">
         {isEditMode ? (
           <Edit2 className="w-3 h-3 text-blue-500" />
         ) : (

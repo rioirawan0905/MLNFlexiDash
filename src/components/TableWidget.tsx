@@ -242,7 +242,7 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
                 const icon = getStatusIcon(value);
                 
                 return (
-                  <td key={col} className="px-4 py-3 align-top group/td overflow-hidden" style={{ width: config.options?.columnWidths?.[col] || 'auto' }}>
+                  <td key={col} className="px-4 py-3 align-top group/td" style={{ width: config.options?.columnWidths?.[col] || 'auto' }}>
                     <div className="flex items-start gap-2 h-full">
                       {(colType === 'status' || (showStatusIconsGlobal && colType === 'text')) && icon && (
                         <span className="text-[14px] mt-[-2px] shrink-0">{icon}</span>
@@ -288,6 +288,7 @@ export const TableWidget: React.FC<TableWidgetProps> = ({ config }) => {
                             value={row[col]} 
                             dataKey={`${config.dataKey}.rows[${i}].${col}`} 
                             className="text-slate-900 break-words whitespace-pre-wrap leading-relaxed"
+                            multiline={true}
                           />
                         )}
                       </div>
